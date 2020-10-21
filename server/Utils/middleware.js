@@ -62,7 +62,7 @@ const createToken = (id) => {
 
 const signup = async (req, res) => {
   const { email, password, username, name } = req.body;
-  console.log('req.body', req.body);
+
   try {
     if (!email || !password || !username || !name) {
       return res
@@ -70,7 +70,6 @@ const signup = async (req, res) => {
         .json({ message: 'Please fill the all information' });
     }
     let user = await User.find({ email });
-    // console.log('user', user);
     if (user.length > 0) {
       return res
         .status(400)
@@ -79,10 +78,9 @@ const signup = async (req, res) => {
 
     user = await User.create({ email, password, username, name }); //.create is async function
     const token = createToken(user._id);
-    console.log('here is success 201');
+
     return res.status(201).json({ token, user });
   } catch (err) {
-    //console.log('errors', err);
     const errors = handleErrors(err);
 
     res.status(400).json({ errors });
@@ -124,11 +122,9 @@ const protect = async (req, res, next) => {
   let token = req.headers.authorization.split('Bearer ')[1];
 
   if (!token || token === 'null') {
-    console.log('here not auth');
     return res.status(401).json({ message: 'not authorized' });
   }
   try {
-    console.log('before verifying token', token);
     const payload = await verifyToken(token);
     const user = await User.findById(payload);
     //   .select('-password') //removing password

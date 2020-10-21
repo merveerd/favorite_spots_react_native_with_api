@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const MessagesSchema = mongoose.Schema({
+const MessagesSchema = new mongoose.Schema({
   chatName: { type: String, required: true },
   createdDate: { type: Date, required: true, default: Date.now },
   first_user: {

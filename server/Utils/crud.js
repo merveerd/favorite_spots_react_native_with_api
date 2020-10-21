@@ -30,19 +30,25 @@ const getManyById = (model) => async (req, res) => {
 
 const getMany = (model) => async (req, res) => {
   try {
+    console.log('req');
     const docs = await model.find();
+    console.log('docs', docs);
     res.status(200).json(docs);
   } catch (err) {
+    let x = { message: err };
+    console.log(x.message);
     res.status(404).json({ message: err });
   }
 };
 
 const createOne = (model) => async (req, res) => {
   try {
+    console.log('post', req.body);
     const doc = await model.create(req.body);
     res.status(200).json(doc);
     console.log('posted');
   } catch (err) {
+    console.log('CANT POSTED', err);
     res.status(404).json({ message: err });
   }
 };
@@ -65,6 +71,19 @@ const updateOne = (model) => async (req, res) => {
   }
 };
 
+const updateArrayInOne = (model) => async (req, res) => {
+  //can be used later
+  let updatingArr = req.body.arr;
+  model.findByIdAndUpdate(
+    req.body.id,
+    { $push: { [updatingArr]: req.body.params } },
+    { safe: true, upsert: true },
+    function (err, model) {
+      console.log(err);
+    }
+  );
+};
+
 const removeOne = (model) => async (req, res) => {
   try {
     const doc = await model.deleteOne({ _id: req.params.id });
@@ -82,5 +101,6 @@ module.exports = function crudControllers(model) {
     updateOne: updateOne(model),
     removeOne: removeOne(model),
     getManyById: getManyById(model),
+    updateArrayInOne: updateArrayInOne(model),
   };
 };

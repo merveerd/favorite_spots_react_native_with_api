@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-const PlacesSchema = mongoose.Schema({
+const PlacesSchema = new mongoose.Schema({
   createdDate: { type: Date, required: true, default: Date.now },
-  desc: { type: String, required: true },
+  desc: { type: String, required: false },
   image: { type: String, required: false }, //can be array for later
   location: {
     type: {
