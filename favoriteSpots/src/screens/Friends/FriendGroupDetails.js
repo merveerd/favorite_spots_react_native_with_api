@@ -1,12 +1,12 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, TouchableOpacity} from 'react-native';
-import {connect} from 'react-redux';
-import {Header} from '../../components';
+import React, {useState, useEffect} from "react";
+import {View, Text, SafeAreaView, TouchableOpacity} from "react-native";
+import {connect} from "react-redux";
+import {Header} from "../../components";
 const FriendGroupDetails = (props) => {
   return (
     <SafeAreaView>
       <View>
-        <Header />
+        <Header onPress={props.navigation.goBack} />
         <Text>
           message button, their favorite places(tags and who added will be shown
           for each) maybe one last photo from there

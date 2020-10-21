@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component} from "react";
 import {
   StyleSheet,
   View,
@@ -10,28 +10,28 @@ import {
   SafeAreaView,
   StatusBar,
   Modal,
-} from 'react-native';
+} from "react-native";
 import MapView, {
   PROVIDER_GOOGLE,
   Marker,
   Callout,
   Polygon,
   Circle,
-} from 'react-native-maps';
-import {request, PERMISSIONS} from 'react-native-permissions';
-import Geolocation from '@react-native-community/geolocation';
+} from "react-native-maps";
+import {request, PERMISSIONS} from "react-native-permissions";
+import Geolocation from "@react-native-community/geolocation";
 //import Carousel from 'react-native-snap-carousel';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import ImagePicker from 'react-native-image-picker';
-import {connect} from 'react-redux';
-import {colors, fonts} from '../../style';
-import {addPersonalPlace} from '../../actions';
-import {Button} from '../../components';
-import {TextInput} from 'react-native-gesture-handler';
+import Icon from "react-native-vector-icons/FontAwesome5";
+import ImagePicker from "react-native-image-picker";
+import {connect} from "react-redux";
+import {colors, fonts} from "../../style";
+import {addPersonalPlace} from "../../actions";
+import {Button} from "../../components";
+import {TextInput} from "react-native-gesture-handler";
 
 class AddLocation extends Component {
   static navigationOptions = {
-    title: 'San Francisco',
+    title: "San Francisco",
   };
 
   state = {
@@ -40,8 +40,8 @@ class AddLocation extends Component {
     markers: [],
     isMapReady: false,
     shownFavorites: false,
-    selectedLocation: '',
-    imageSelectTapped: false,
+    selectedLocation: "",
+    imageSelected: false,
 
     region: {
       latitude: 10,
@@ -62,57 +62,58 @@ class AddLocation extends Component {
 
   selectImage() {
     const options = {
-      title: 'Profil Fotoğrafı Seçiniz',
+      title: "Profil Fotoğrafı Seçiniz",
       quality: 0.2,
-      takePhotoButtonTitle: 'Resim Çek',
-      chooseFromLibraryButtonTitle: 'Galeriden Seç',
-      cancelButtonTitle: 'Kapat',
+      takePhotoButtonTitle: "Resim Çek",
+      chooseFromLibraryButtonTitle: "Galeriden Seç",
+      cancelButtonTitle: "Kapat",
       storageOptions: {
         skipBackup: true,
-        path: 'images',
+        path: "images",
       },
     };
 
     ImagePicker.showImagePicker(options, async (response) => {
-      console.log('Response = ', response);
+      console.log("Response = ", response);
 
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+        console.log("User cancelled image picker");
       } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
+        console.log("ImagePicker Error: ", response.error);
       } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
+        console.log("User tapped custom button: ", response.customButton);
       } else {
         const uri = response.uri;
         this.setState({image: uri});
+        this.setState({imageSelected: true});
       }
     });
   }
 
   showWelcomeMessage = () =>
-    Alert.alert('Welcome to San Francisco', 'The food is amazing', [
+    Alert.alert("Welcome to San Francisco", "The food is amazing", [
       {
-        text: 'Cancel',
-        style: 'cancel',
+        text: "Cancel",
+        style: "cancel",
       },
       {
-        text: 'Ok',
+        text: "Ok",
       },
     ]);
 
   requestLocationPermission = async () => {
-    if (Platform.OS === 'ios') {
+    if (Platform.OS === "ios") {
       var response = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-      console.log('iPhone: ' + response);
+      console.log("iPhone: " + response);
 
-      if (response === 'granted') {
+      if (response === "granted") {
         this.locateCurrentPosition();
       }
     } else {
       var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-      console.log('Android: ' + response);
+      console.log("Android: " + response);
 
-      if (response === 'granted') {
+      if (response === "granted") {
         this.locateCurrentPosition();
       }
     }
@@ -152,16 +153,16 @@ class AddLocation extends Component {
   // Fetch location details as a JOSN from google map API
   fetchAddress = () => {
     fetch(
-      'https://maps.googleapis.com/maps/api/geocode/json?address=' +
+      "https://maps.googleapis.com/maps/api/geocode/json?address=" +
         this.state.region.latitude +
-        ',' +
+        "," +
         this.state.region.longitude +
-        '&key=' +
-        'AIzaSyDETQ1fCUl8u3oXaIhQEL0roq7HDeRaddQ',
+        "&key=" +
+        "AIzaSyDETQ1fCUl8u3oXaIhQEL0roq7HDeRaddQ",
     )
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('responseJson', responseJson);
+        console.log("responseJson", responseJson);
         const selectedAdress = responseJson.results[0].formatted_address;
 
         this.setState({
@@ -172,13 +173,13 @@ class AddLocation extends Component {
           },
           regionChangeProgress: false,
         });
-        console.log('selected pos', this.state.selectedLocation);
+        console.log("selected pos", this.state.selectedLocation);
       });
   };
 
   // Update state on region change
   onRegionChange = (region) => {
-    console.log('onRegionChange', region);
+    console.log("onRegionChange", region);
     this.setState(
       {
         region,
@@ -225,9 +226,9 @@ class AddLocation extends Component {
               showsUserLocation={true}
               style={{
                 flex: 8,
-                width: '100%',
-                height: '100%',
-                justifyContent: 'flex-end',
+                width: "100%",
+                height: "100%",
+                justifyContent: "flex-end",
               }}
               initialRegion={this.state.initialPosition}
               onMapReady={this.onMapReady}
@@ -266,33 +267,30 @@ class AddLocation extends Component {
               <Text
                 style={{
                   fontSize: 16,
-                  fontWeight: 'bold',
-                  fontFamily: 'roboto',
+                  fontWeight: "bold",
+                  fontFamily: "roboto",
                 }}>
                 Move map for location
               </Text>
-              <Text style={{fontSize: 10, color: '#999'}}>LOCATION</Text>
+              <Text style={{fontSize: 10, color: "#999"}}>LOCATION</Text>
               <Text
                 numberOfLines={2}
                 style={{
                   fontSize: 14,
                   paddingVertical: 10,
-                  borderBottomColor: 'silver',
+                  borderBottomColor: "silver",
                   borderBottomWidth: 0.5,
                 }}>
                 {!this.state.regionChangeProgress
                   ? this.state.selectedLocation.adress
-                  : 'Identifying Location...'}
+                  : "Identifying Location..."}
               </Text>
               <Button
                 style={styles.customButtonSelect}
-                text={'Select Image for this place'}
+                text={"Select Image for this place"}
                 disabled={this.state.regionChangeProgress}
                 onPress={() => {
-                  if (!this.state.imageSelectTapped) {
-                    this.selectImage();
-                    this.setState({imageSelectTapped: true});
-                  }
+                  this.selectImage();
                 }}></Button>
               {/* <Button
                 style={styles.customButtonSelect}
@@ -307,8 +305,8 @@ class AddLocation extends Component {
             <Image
               source={{uri: this.state.image}}
               style={{
-                width: '100%',
-                height: '70%',
+                width: "100%",
+                height: "70%",
               }}
               resizeMode="contain"
             />
@@ -318,9 +316,9 @@ class AddLocation extends Component {
               autoCompleteType="off"
               placeholder="Now, enter a description for this place"
               style={{
-                width: '60%',
-                height: '10%',
-                alignSelf: 'center',
+                width: "60%",
+                height: "10%",
+                alignSelf: "center",
                 fontSize: fonts.small,
               }}
               placeholderTextColor="black"
@@ -329,25 +327,30 @@ class AddLocation extends Component {
               }}></TextInput>
             <Button
               style={styles.customButtonAdd}
-              text={'Add in your favorites!'}
+              text={"Add in your favorites!"}
               onPress={() => {
+                console.log("this.state.image", this.state.image);
+                console.log("user", this.props.user, this.props.user._id);
                 const params = {
-                  placeName: null, //there should be original name if there is any, to keep track how many people liked it
-                  user: this.props.user.uid,
-                  desc: this.state.desc,
-                  image: this.state.image,
-                  createdDate: new Date(),
-                  location: this.state.selectedLocation,
+                  place: {
+                    placeName: null, //there should be original name if there is any, to keep track how many people liked it
+                    desc: this.state.desc,
+                    image: this.state.image,
+                    createdDate: new Date(),
+                    location: this.state.selectedLocation,
+                  },
+                  user: this.props.user,
                 };
+                console.log(params);
                 //comment could be available when it is open to friendList/friendGroup friend degilken sadece kac tane favori place I var  onu gorebiliyosun.
                 if (this.state.desc) {
                   this.props.addPersonalPlace(params);
                   this.setState({image: null});
-                  console.log('after post', this.state.image);
+                  console.log("after post", this.state.image);
                 } else {
                   Alert.alert(
-                    'Hey',
-                    'please enter how you want to remember this place',
+                    "Hey",
+                    "please enter how you want to remember this place",
                   );
                 }
               }}></Button>
@@ -380,12 +383,12 @@ const styles = StyleSheet.create({
   },
 
   carousel: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     marginBottom: 48,
   },
   cardContainer: {
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
     height: 200,
     width: 300,
     padding: 24,
@@ -395,37 +398,37 @@ const styles = StyleSheet.create({
     height: 120,
     width: 300,
     bottom: 0,
-    position: 'absolute',
+    position: "absolute",
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
   },
   cardTitle: {
-    color: 'white',
+    color: "white",
     fontSize: 22,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   customButtonAdd: {
-    color: 'white',
-    alignSelf: 'center',
-    width: '60%',
-    height: '10%',
+    color: "white",
+    alignSelf: "center",
+    width: "60%",
+    height: "10%",
   },
   customButtonSelect: {
-    color: 'white',
-    alignSelf: 'center',
-    width: '60%',
-    height: '30%',
+    color: "white",
+    alignSelf: "center",
+    width: "60%",
+    height: "30%",
   },
 
   detailSection: {
-    width: '100%',
+    width: "100%",
     flex: 2,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
 
   btnContainer: {
-    width: '50%',
-    height: '100%',
+    width: "50%",
+    height: "100%",
   },
 });
 

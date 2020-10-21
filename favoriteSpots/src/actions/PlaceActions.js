@@ -14,136 +14,112 @@ import {
   UPDATE_PERSONAL_PLACE_START,
   UPDATE_PERSONAL_PLACE_SUCCESS,
   UPDATE_PERSONAL_PLACE_FAILED,
+  BASE_URL,
 } from "./types";
 import storage from "@react-native-firebase/storage";
 import firestore from "@react-native-firebase/firestore";
 import {Alert} from "react-native";
+import {post, get, patch} from "./APIService";
 import * as RootNavigation from "../RootNavigation";
 
-export const getMyPlaces = (param) => {
-  return (dispatch) => {
-    // according to individual userId //myfavoritePlaces
-    console.log("getMyPlaces", param);
-    dispatch({type: GET_PERSONAL_PLACE_START});
-    firestore()
-      .collection("Places")
-      .orderBy("createdDate", "desc")
-      .where("user", "==", param) //params will be the user Id
-      .get()
-      .then((data) => {
-        console.log("get", data);
+// const respondGetMyPlaces = (response, status, dispatch) => {
+//   if (status) {
+//     let ownPlaces = [];
 
-        let ownPlaces = [];
+//     console.log("ownPlaces response", response);
+//     // dispatch({
+//     //   type: GET_PERSONAL_PLACE_SUCCESS,
+//     //   payload: ownPlaces,
+//     // });
+//   } else {
+//     console.log(":ownPlaces ", response);
+//     // dispatch({
+//     //   type: GET_PERSONAL_PLACE_FAILED,
+//     // });
+//   }
+// };
 
-        data._docs.forEach((group, index) => {
-          ownPlaces.push({...group._data, id: group._ref.id}); //check ref.id
-        });
-        console.log("ownPlaces", ownPlaces);
-        dispatch({
-          type: GET_PERSONAL_PLACE_SUCCESS,
-          payload: ownPlaces,
-        });
-      })
-      .catch((err) => {
-        console.log("Read Data error: ", err);
-        dispatch({
-          type: GET_PERSONAL_PLACE_FAILED,
-        });
-      });
-  };
-};
+// export const getMyPlaces = (param) => {
+//   return (dispatch) => {
+//     // according to individual userId //myfavoritePlaces
+//     dispatch({type: GET_PERSONAL_PLACE_START});
+//     get(BASE_URL + "/places", respondGetMyPlaces, dispatch, param); // param will be the user places array
+//     console.log("getMyPlaces", param);
+//   };
+// };
 
-export const getFriendGroupsPlaces = (params) => {
-  //should be listened with snapshot
-  return (dispatch) => {
-    dispatch({type: GET_GROUP_PLACE_START});
-    firestore()
-      .collection("Places")
-      .where("friendGroups", "array-contains-any", [params.id])
-      .get()
-      .then((data) => {
-        let groupPlaces = [];
-        data._docs.forEach((item) => {
-          groupPlaces.push(item._data);
-        });
-        dispatch({type: GET_GROUP_PLACE_SUCCESS, payload: groupPlaces});
-      })
-      .catch(() => {
-        dispatch({type: GET_GROUP_PLACE_FAILED});
-        console.log("Couldnt get the places!");
-      });
-  };
+const respondAddGroupPLace = (response, status, dispatch) => {
+  if (status) {
+    Alert.alert("well done", "Now you have one more common favorite place");
+    dispatch({
+      type: ADD_GROUP_PLACE_SUCCESS,
+      payload: response, //response should be the place addded
+    });
+  } else {
+    dispatch({type: ADD_GROUP_PLACE_FAILED});
+    console.log("adding place to friend group is failed", response);
+  }
 };
 
 export const addGroupPlace = (params) => {
   return (dispatch) => {
-    dispatch({type: UPDATE_PERSONAL_PLACE_START});
-    firestore()
-      .collection("Places")
-      .doc(params.placeId)
-      .update({
-        friendGroups: firestore.FieldValue.arrayUnion(
-          `${params.friendGroupId}`,
-        ),
-      })
-      .then((data) => {
-        Alert.alert("well done", "Now you have one more common favorite place");
-        dispatch({
-          type: UPDATE_PERSONAL_PLACE_SUCCESS,
-          payload: params,
-        });
-      })
-      .catch(() => {
-        dispatch({type: UPDATE_PERSONAL_PLACE_FAILED});
-      });
+    dispatch({type: ADD_GROUP_PLACE_START});
+
+    post(
+      BASE_URL + `/friendgroups/${params.groupId}`,
+      respondAddGroupPLace,
+      dispatch,
+      params.place,
+    );
+    //params.groupId  params.place will be the place info
   };
+};
+
+const respondAddPersonalPlace = (response, status, dispatch) => {
+  if (status) {
+    //I assume that the response is user
+    dispatch({type: UPDATE_USER_SUCCESS, payload: response}); //response will be the place info
+    Alert.alert("well done", "A new favorite place you have");
+  } else {
+    dispatch({type: UPDATE_USER_FAILEDD});
+    console.log("The place has been not added!");
+  }
 };
 
 export const addPersonalPlace = (params) => {
   return (dispatch) => {
-    dispatch({type: ADD_PERSONAL_PLACE_START});
-    firestore()
-      .collection("Places")
-      .add(params)
-      .then((data) => {
-        let placeId = data.id;
+    dispatch({type: UPDATE_USER_START});
 
-        if (params.image) {
-          const reference = storage().ref(`/places/${placeId}`);
-          console.log("params.image", params.image);
-          reference
-            .putFile(params.image)
-            .then(() => {
-              reference.getDownloadURL().then((imageURL) => {
-                firestore()
-                  .collection("Places")
-                  .doc(placeId)
-                  .update({image: imageURL})
-                  .then(() => {
-                    let newPlace = {...params, id: placeId};
-                    dispatch({
-                      type: ADD_PERSONAL_PLACE_SUCCESS,
-                      payload: newPlace,
-                    });
-                    Alert.alert(
-                      "well done",
-                      "A new favorite place you have now",
-                    );
-                  });
-              });
-            })
-            .catch((error) => {
-              console.log("Image loading error ", error);
-            });
-        } else {
-          dispatch({type: ADD_PERSONAL_PLACE_SUCCESS, payload: params});
-          Alert.alert("well done", "A new favorite place you have now");
-        }
-      })
-      .catch(() => {
-        dispatch({type: ADD_PERSONAL_PLACE_FAILED});
-        console.log("Place hasnt been added!");
-      });
+    if (params.place.image) {
+      //other updates can be considerable later
+
+      reference
+        .putFile(params.place.image)
+        .then(() => {
+          reference.getDownloadURL().then((imageURL) => {
+            params.place.image = imageURL;
+          });
+          params.user.places.push(params.place);
+          patch(
+            BASE_URL + `/users/${params.user._id}`,
+            respondAddPersonalPlace,
+            dispatch,
+            params.user,
+          );
+        })
+        .catch((error) => {
+          console.log("Image has been not uploaded ", error);
+          dispatch({type: UPDATE_USER_FAILED});
+        });
+    } else {
+      params.user.places.push(params.place);
+      patch(
+        BASE_URL + `/users/${params.user._id}`,
+        respondAddPersonalPlace,
+        dispatch,
+        params.user,
+      );
+    }
   };
 };
 

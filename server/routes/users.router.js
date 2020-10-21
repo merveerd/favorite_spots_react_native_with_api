@@ -10,5 +10,5 @@ router
   .route('/:id')
   .get(controllers.getOne)
   .patch(controllers.updateOne)
-  .delete(controllers.removeOne); //token should be removed on client side
+  .delete(controllers.removeOne);
 module.exports = router;

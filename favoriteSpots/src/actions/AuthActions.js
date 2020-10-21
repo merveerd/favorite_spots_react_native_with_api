@@ -1,3 +1,9 @@
+import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
+import storage from "@react-native-firebase/storage";
+import AsyncStorage from "@react-native-community/async-storage";
+import * as Keychain from "react-native-keychain";
+
 import {
   LOGIN_START,
   LOGIN_SUCCESS,
@@ -9,222 +15,150 @@ import {
   RESET_USERS,
   RESET_PLACES,
   RESET_FRIEND_GROUPS,
-} from './types';
+  BASE_URL,
+  LOCAL_AUTH_ID,
+  USER,
+} from "./types";
 
-import {Alert} from 'react-native';
-import * as RootNavigation from '../RootNavigation';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
+import {Alert} from "react-native";
+import {post, get, patch} from "./APIService";
+import * as RootNavigation from "../RootNavigation";
 
-export const login = (params) => {
-  return (dispatch) => {
-    if (params.email != '' && params.password != '') {
-      if (validateEmail(params.email)) {
-        dispatch({
-          type: LOGIN_START,
-        });
+const respondLoginAction = async (response, status, dispatch) => {
+  if (status) {
+    console.log("respondLoginAction", response.data.user);
 
-        auth()
-          .signInWithEmailAndPassword(params.email, params.password)
-          .then((data) => {
-            const uid = data.user._user.uid;
+    dispatch({
+      type: LOGIN_SUCCESS,
+      payload: response.data.user,
+    });
 
-            // read user from db
-            firestore()
-              .collection('Users')
-              .doc(uid)
-              .get()
-              .then((user) => {
-                const userParams = {
-                  ...user._data,
-                  uid,
-                };
-                console.log('login', userParams);
-                dispatch({
-                  type: LOGIN_SUCCESS,
-                  payload: userParams,
-                });
-              })
-              .catch((err) => {
-                console.log('Read Data error: ', err);
-                dispatch({
-                  type: LOGIN_FAILED,
-                });
-              });
-          })
-          .catch((error) => {
-            if (error.code === 'auth/invalid-email') {
-              console.log('That email address is invalid!');
-            } else if (error.code === 'auth/user-not-found') {
-              console.log('That email address is invalid!');
-              Alert.alert('Uyarı', 'Böyle bir kullanıcı bulunamadı!');
-            }
-            console.log('error came');
-            console.log(error.code);
-            dispatch({
-              type: LOGIN_FAILED,
-            });
-          });
-      } else {
-        Alert.alert('UYARI', 'Lütfen geçerli bir email yazınız!');
-      }
-    } else {
-      Alert.alert('UYARI', 'Lütfen bütün alanları doldurunuz!');
-    }
-  };
-};
-export const updateUserProfile = (params) => {
-  return (dispatch) => {
-    dispatch({type: UPDATE_USER_START});
-    if (params.image) {
-      let userId = params.uid;
-      const reference = storage().ref(`/users/${userId}`);
-      console.log('params.image', params.image);
-      reference
-        .putFile(params.image)
-        .then(() => {
-          reference.getDownloadURL().then((imageURL) => {
-            firestore()
-              .collection('Users')
-              .doc(userId)
-              .update({image: imageURL})
-              .then(() => {
-                let updatedUser = {...params, image: imageURL};
-                console.log('updateUser', updatedUser);
-                dispatch({
-                  type: UPDATE_USER_SUCCESS,
-                  payload: updatedUser,
-                });
-                Alert.alert('updated', 'Your profile image is updated!');
-              });
-          });
-        })
-        .catch((error) => {
-          console.log('Image loading error ', error);
-        });
-    } else {
-      dispatch({type: UPDATE_USER_SUCCESS, payload: params});
-      Alert.alert('updated', 'Your profile image is updated!');
-    }
-  };
+    RootNavigation.replace("Home");
+
+    USER.token = response.data.token;
+
+    // await Keychain.setGenericPassword(LOCAL_AUTH_ID, response.data.token);
+    // const credentials = Keychain.getGenericPassword();
+    //console.log("credentials", credentials);
+    AsyncStorage.setItem(LOCAL_AUTH_ID, response.data.token);
+    let token = await AsyncStorage.getItem(LOCAL_AUTH_ID);
+    console.log("async token setted", token);
+  } else {
+    console.log("Gelen POST Hatalı respondLoginAction: => ", response);
+    Alert.alert("WARNING", "Something bad happened!");
+    dispatch({type: LOGIN_FAILED});
+  }
 };
 
 export const signUp = (params) => {
   return (dispatch) => {
     if (
-      params.email != '' &&
-      params.password != '' &&
-      params.name != '' &&
-      params.username != ''
+      params.email != "" &&
+      params.password != "" &&
+      params.name != "" &&
+      params.username != ""
     ) {
       if (validateEmail(params.email)) {
-        firestore()
-          .collection('Users')
-          .where('username', '==', params.username)
-          .get()
-          .then((snapshot) => {
-            if (snapshot.empty) {
-              auth()
-                .createUserWithEmailAndPassword(params.email, params.password)
-                .then((data) => {
-                  const uid = data.user._user.uid;
-                  // write user from db
-                  const setData = {
-                    name: params.name,
-                    username: params.username,
-                    email: params.email,
-                  };
-                  firestore()
-                    .collection('Users')
-                    .doc(uid) //unique Id given here
-                    .set(setData)
-                    .then(() => {
-                      console.log('User is created!');
-                      Alert.alert(
-                        'Got it',
-                        'Your account has been created!',
-                        [
-                          {
-                            text: 'OK',
-                            onPress: () => RootNavigation.pop(),
-                          },
-                        ],
-                        {
-                          cancelable: false,
-                        },
-                      );
-                    })
-                    .catch(() => {
-                      console.log('User is not created!');
-                    });
-                })
-                .catch((error) => {
-                  if (error.code === 'auth/email-already-in-use') {
-                    Alert.alert(
-                      'Warning',
-                      'That email address is already in use!!',
-                    );
-                  }
-                });
-            } else {
-              Alert.alert('Warning', 'That username is already in use!!');
-            }
-          });
+        dispatch({type: LOGIN_START});
+        AsyncStorage.removeItem(LOCAL_AUTH_ID);
+        post(BASE_URL.concat("/signup"), respondLoginAction, dispatch, params);
       } else {
-        Alert.alert('UYARI', 'Lütfen geçerli bir email yazınız!');
+        Alert.alert("WARNING", "Please enter a valid email address");
       }
     } else {
-      Alert.alert('UYARI', 'Lütfen bütün alanları doldurunuz!');
+      Alert.alert("WARNING", "Please fill out the all fields");
     }
   };
 };
 
-export const isUser = () => {
+export const login = (params) => {
   return (dispatch) => {
-    auth().onAuthStateChanged((user) => {
-      console.log('Is user:', user);
-      if (user) {
-        const uid = user._user.uid;
-        getUser(uid, dispatch);
+    if (params.email != "" && params.password != "") {
+      if (validateEmail(params.email)) {
+        dispatch({
+          type: LOGIN_START,
+        });
+
+        post(BASE_URL.concat("/signin"), respondLoginAction, dispatch, params);
       } else {
-        console.log('no user');
-        dispatch({type: LOGIN_FAILED});
+        Alert.alert("WARNING", "Please enter a valid email address");
       }
-    });
+    } else {
+      Alert.alert("WARNING", "Please fill out the all fields");
+    }
   };
 };
 
-const getUser = (uid, dispatch) => {
-  // read user from db
-  firestore()
-    .collection('Users')
-    .doc(uid)
-    .get()
-    .then((user) => {
-      const userParams = {
-        ...user._data,
-        uid,
-      };
-      console.log('user info', userParams);
-      dispatch({type: LOGIN_SUCCESS, payload: userParams});
-    })
-    .catch((err) => {
-      console.log('Read Data error: ', err);
-      dispatch({type: LOGIN_FAILED});
+const respondUpdateUser = (response, status, dispatch) => {
+  if (status) {
+    console.log("respondUpdateUser", response.data);
+    dispatch({
+      type: UPDATE_USER_SUCCESS,
+      payload: response.data,
     });
+
+    Alert.alert("updated", "Your profile image is updated!");
+  } else {
+    console.log("Gelen POST Hatalı respondUpdateUser: => ", response);
+    Alert.alert("WARNING", "Something bad happened!");
+    dispatch({type: LOGIN_FAILED});
+  }
+};
+
+export const updateUserProfile = (params) => {
+  return (dispatch) => {
+    dispatch({type: UPDATE_USER_START});
+    if (params.image) {
+      let userId = params.id;
+      const reference = storage().ref(`/users/${userId}`); //still using the firebase for image storage
+
+      reference
+        .putFile(params.image)
+        .then(() => {
+          reference.getDownloadURL().then((imageURL) => {
+            patch(
+              BASE_URL.concat(`/users/${userId}`),
+              respondUpdateUser,
+              dispatch,
+              {image: imageURL},
+            );
+          });
+        })
+        .catch((error) => {
+          console.log("Image loading error ", error);
+        });
+    }
+  };
+};
+
+const getUser = (response, status, dispatch) => {
+  if (status) {
+    console.log(response);
+    dispatch({type: LOGIN_SUCCESS, payload: response.data.user});
+  } else {
+    console.log("Read Data error get User: ", response);
+    dispatch({type: LOGIN_FAILED});
+  }
+};
+
+export const isUser = () => {
+  return (dispatch) => {
+    dispatch({type: LOGIN_START});
+    get(BASE_URL, getUser, dispatch);
+  };
 };
 
 export const signOut = () => {
   return (dispatch) => {
-    auth()
-      .signOut()
-      .then(() => {
-        dispatch({type: SIGN_OUT_SUCCESS});
-        dispatch({type: RESET_USERS});
-        dispatch({type: RESET_PLACES});
-        dispatch({type: RESET_FRIEND_GROUPS});
-      });
+    // Keychain.resetGenericPassword();
+    AsyncStorage.removeItem(LOCAL_AUTH_ID);
+    USER.token = null;
+
+    dispatch({type: SIGN_OUT_SUCCESS});
+    dispatch({type: RESET_USERS});
+    dispatch({type: RESET_PLACES});
+    dispatch({type: RESET_FRIEND_GROUPS});
+
     //  RootNavigation.replace('Entrance');
   };
 };

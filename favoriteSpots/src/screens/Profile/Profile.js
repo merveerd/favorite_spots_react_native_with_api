@@ -26,7 +26,7 @@ const Profile = (props) => {
     <SafeAreaView>
       <View style={styles.container}>
         <View style={styles.topBackground}>
-          <Header />
+          <Header onPress={props.navigation.goBack} />
         </View>
         <View style={styles.wrapper}>
           <TouchableOpacity

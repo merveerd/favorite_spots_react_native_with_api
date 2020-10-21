@@ -14,35 +14,39 @@ const handleErrors = (err) => {
   }
 
   // incorrect password
-  if (err.message === 'incorrect password') {
+  else if (err.message === 'incorrect password') {
     errors.password = 'That password is incorrect';
   }
 
   // unique email error
-  if (err.code === 11000) {
+  else if (err.code === 11000) {
     console.log('error code is 11000');
-    errors.email = 'that email is already registered';
+    errors.email = 'That email is already registered';
     return errors;
   }
 
   // validation errors
-  if (err.message.includes('user validation failed')) {
+  else if (err.message.includes('user validation failed')) {
     // console.log(err);
     Object.values(err.errors).forEach(({ properties }) => {
       // console.log(val);
-      // console.log(properties);
+      console.log('properties', properties);
       errors[properties.path] = properties.message;
     });
+  } else {
+    errors = { message: err.message };
   }
 
   return errors;
 };
 
-const verifyToken = () => {
-  new Promise((resolve, reject) => {
-    jwt.verify(token, process.env.ACCESS_TOKEN, (err, payload) => {
+const verifyToken = async (token) => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
+      console.log('verify token', err, payload);
       if (err) return reject(err);
-      resolve(payload);
+      console.log('without sending payload', payload.id);
+      resolve(payload.id);
     });
   });
 };
@@ -50,28 +54,33 @@ const verifyToken = () => {
 // create json web token
 
 const createToken = (id) => {
+  console.log('numbered token life ', Number(process.env.REFRESH_TOKEN_LIFE));
   return jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: process.env.REFRESH_TOKEN_LIFE,
+    expiresIn: Number(process.env.REFRESH_TOKEN_LIFE),
   });
 };
 
 const signup = async (req, res) => {
   const { email, password, username, name } = req.body;
-
+  console.log('req.body', req.body);
   try {
-    //should be handled empty string etc in front-end
     if (!email || !password || !username || !name) {
-      return res.status(400).send('Please fill the all information');
+      return res
+        .status(400)
+        .json({ message: 'Please fill the all information' });
     }
     let user = await User.find({ email });
     // console.log('user', user);
     if (user.length > 0) {
-      return res.status(400).send('A user with that email already exists.');
+      return res
+        .status(400)
+        .json({ message: 'A user with that email already exists.' });
     }
 
     user = await User.create({ email, password, username, name }); //.create is async function
     const token = createToken(user._id);
-    return res.status(201).send({ token });
+    console.log('here is success 201');
+    return res.status(201).json({ token, user });
   } catch (err) {
     //console.log('errors', err);
     const errors = handleErrors(err);
@@ -84,7 +93,7 @@ const signin = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).send('Please fill the all information');
+    return res.status(400).json({ message: 'Please fill the all information' });
   }
   try {
     const user = await User.findOne({ email });
@@ -93,38 +102,43 @@ const signin = async (req, res) => {
         const auth = await bcrypt.compare(password, user.password);
         if (auth) {
           const token = createToken(user._id);
-          return res.status(201).send({ token });
+          return res.status(201).json({ token, user }); //give the user back too
         } else {
-          return res.status(400).send('incorrect password');
+          return res.status(400).json({ message: 'incorrect password' });
         }
       } catch (err) {
         //console.log('signIn err', err);
-        return res.status(400).send('incorrect email');
+        return res.status(400).json({ message: 'incorrect email' });
       }
     }
-    return res.status(400).send('incorrect email');
   } catch (err) {
     return res.status(400).json({ message: err });
   }
 };
 
 const protect = async (req, res, next) => {
-  if (!eq.headers.authorization) {
+  if (!req.headers.authorization) {
     return res.status(401).json({ message: 'not authorized' });
   }
 
   let token = req.headers.authorization.split('Bearer ')[1];
-  if (!token) {
+
+  if (!token || token === 'null') {
+    console.log('here not auth');
     return res.status(401).json({ message: 'not authorized' });
   }
   try {
+    console.log('before verifying token', token);
     const payload = await verifyToken(token);
-    const user = await User.findById(payload.id)
-      .select('-password') //removing password
-      .lean() //converting into json data from mongoose
-      .exec(); // Will execute returning a promise
-    req.user = user; //we removed the password and execution will be continued for routes actions
-    next();
+    const user = await User.findById(payload);
+    //   .select('-password') //removing password
+    //   .lean() //converting into json data from mongoose
+    //   .exec(); // Will execute returning a promise
+    // req.user = user; //we removed the password and execution will be continued for routes actions
+    console.log('user protect', user);
+    res.status(200).json({ user });
+
+    //  next();
   } catch (e) {
     return res.status(401).json({ message: 'not authorized' });
   }

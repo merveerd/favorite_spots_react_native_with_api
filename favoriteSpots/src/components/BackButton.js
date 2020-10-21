@@ -9,9 +9,7 @@ const BackButton = (props) => (
     style={{color: colors.blue, marginLeft: 10, fontSize: 40}}
     type="FontAwesome"
     name="angle-left"
-    onPress={() => {
-      RootNavigation.navigate("Main");
-    }}></Icon>
+    onPress={props.onPress}></Icon>
 );
 
 export {BackButton};

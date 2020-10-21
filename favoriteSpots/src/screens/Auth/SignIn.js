@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useContext} from 'react';
+import React, {useState, useEffect, useRef, useContext} from "react";
 
 import {
   Text,
@@ -9,31 +9,31 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
-} from 'react-native';
-import {connect} from 'react-redux';
-import {Input, Button, CheckBox, BackButton} from '../../components';
-import {login} from '../../actions';
-import {colors, fonts, appName} from '../../style';
+} from "react-native";
+import {connect} from "react-redux";
+import {Input, Button, CheckBox, BackButton} from "../../components";
+import {login} from "../../actions";
+import {colors, fonts, appName} from "../../style";
 
 const SignIn = (props) => {
   //  const {signIn} = useContext(AuthContext);
 
-  const [email, setEmail] = useState('test@test.com');
-  const [password, setPassword] = useState('123456');
+  const [email, setEmail] = useState("test@test.com");
+  const [password, setPassword] = useState("123456");
   const [checkButton, setCheckButton] = useState(true);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#E7E5E3'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: "#E7E5E3"}}>
       <KeyboardAvoidingView
-        behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
         style={{flex: 1}}>
         <ScrollView
           contentContainerStyle={{
             flex: 1,
-            backgroundColor: 'white',
+            backgroundColor: "white",
             borderRadius: 20,
           }}>
-          <BackButton />
+          <BackButton onPress={props.navigation.goBack} />
           {/* Logo  */}
 
           <View style={styles.headerView}>
@@ -44,13 +44,13 @@ const SignIn = (props) => {
 
           <View style={styles.formView}>
             <Input
-              placeholder={'Email'}
+              placeholder={"Email"}
               value={email}
               onChangeText={(email) => setEmail(email)}
             />
 
             <Input
-              placeholder={'Password'}
+              placeholder={"Password"}
               secureTextEntry={checkButton}
               value={password}
               onChangeText={(password) => setPassword(password)}
@@ -66,7 +66,7 @@ const SignIn = (props) => {
               </TouchableOpacity>
             </View>
             <Button
-              text={'Login'}
+              text={"Login"}
               style={styles.button}
               textStyle={styles.textStyle}
               onPress={() => {
@@ -88,37 +88,37 @@ const SignIn = (props) => {
 const styles = StyleSheet.create({
   headerView: {
     flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
   appName: {
     fontSize: fonts.big,
-    fontFamily: 'BalsamiqSans-Bold',
+    fontFamily: "BalsamiqSans-Bold",
     letterSpacing: 3,
     color: colors.blue,
   },
   formView: {
     flex: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   optionForPassView: {
-    width: '80%',
-    marginBottom: '5%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    width: "80%",
+    marginBottom: "5%",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   button: {
-    width: '85%',
+    width: "85%",
   },
   textStyle: {
     //Button Text
-    fontFamily: 'BalsamiqSans-Bold',
+    fontFamily: "BalsamiqSans-Bold",
     letterSpacing: 2,
   },
   footerView: {
     flex: 0.5,
-    alignItems: 'center',
+    alignItems: "center",
   },
 });
 

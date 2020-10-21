@@ -18,6 +18,8 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   username: { type: String, required: true },
   image: { type: String, required: false },
+  friendgroups: { type: Array, required: false, default: [] },
+  places: { type: Array, required: false, default: [] },
 });
 
 // fire a function before doc saved to db

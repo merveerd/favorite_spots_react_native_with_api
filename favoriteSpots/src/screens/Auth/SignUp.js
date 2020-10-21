@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState} from "react";
 import {
   Text,
   View,
@@ -7,27 +7,27 @@ import {
   KeyboardAvoidingView,
   StyleSheet,
   Platform,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {Input, Button, BackButton} from '../../components';
-import {connect} from 'react-redux';
-import {signUp} from '../../actions';
-import {colors, fonts, appName} from '../../style';
+} from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
+import {Input, Button, BackButton} from "../../components";
+import {connect} from "react-redux";
+import {signUp} from "../../actions";
+import {colors, fonts, appName} from "../../style";
 
 const SignUp = (props) => {
-  const [name, setName] = useState('test');
-  const [username, setUsername] = useState('test1');
-  const [email, setEmail] = useState('test@test.com');
-  const [password, setPassword] = useState('123456');
+  const [name, setName] = useState("test");
+  const [username, setUsername] = useState("test1");
+  const [email, setEmail] = useState("test@test.com");
+  const [password, setPassword] = useState("123456");
 
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView contentContainerStyle={{flex: 1}}>
         <KeyboardAvoidingView
-          behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-          style={{flex: 1, backgroundColor: 'white', borderRadius: 20}}>
+          behavior={Platform.OS == "ios" ? "padding" : "height"}
+          style={{flex: 1, backgroundColor: "white", borderRadius: 20}}>
           {/* Header  */}
-          <BackButton />
+          <BackButton onPress={props.navigation.goBack} />
           <View style={styles.headerView}>
             <Text style={appName}>HUBSPOTS</Text>
           </View>
@@ -36,32 +36,32 @@ const SignUp = (props) => {
 
           <View style={styles.formView}>
             <Input
-              placeholder={'Name'}
+              placeholder={"Name"}
               value={name}
               onChangeText={(name) => setName(name)}
             />
 
             <Input
-              placeholder={'User Name'}
+              placeholder={"User Name"}
               value={username}
               onChangeText={(username) => setUsername(username)}
             />
 
             <Input
-              placeholder={'Email'}
+              placeholder={"Email"}
               value={email}
               onChangeText={(email) => setEmail(email)}
             />
 
             <Input
-              placeholder={'Password'}
+              placeholder={"Password"}
               secureTextEntry
               value={password}
               onChangeText={(password) => setPassword(password)}
             />
 
             <Button
-              text={'Sign Up'}
+              text={"Sign Up"}
               textStyle={styles.textStyle}
               onPress={() => {
                 const params = {email, password, name, username};
@@ -81,7 +81,7 @@ const SignUp = (props) => {
                 <View style={styles.line} />
               </View>
             </View>
-            <View style={{flex: 1, alignItems: 'center'}}>
+            <View style={{flex: 1, alignItems: "center"}}>
               <View style={styles.iconContainer}>
                 <Icon
                   name="facebook"
@@ -110,52 +110,52 @@ const SignUp = (props) => {
 const styles = StyleSheet.create({
   headerView: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+    alignItems: "center",
+    justifyContent: "flex-end",
   },
   appName: {
     fontSize: fonts.big,
-    fontFamily: 'BalsamiqSans-Bold',
+    fontFamily: "BalsamiqSans-Bold",
     letterSpacing: 3,
     color: colors.blue,
   },
   formView: {
     flex: 3,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: '5%',
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: "5%",
   },
 
   button: {
-    width: '85%',
+    width: "85%",
   },
   textStyle: {
     fontSize: fonts.small,
-    fontFamily: 'BalsamiqSans-Bold',
-    color: 'black',
+    fontFamily: "BalsamiqSans-Bold",
+    color: "black",
   },
   footerView: {
     flex: 1.5,
   },
   footerContent: {
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    alignItems: "center",
+    justifyContent: "flex-start",
   },
   lineView: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "flex-start",
   },
 
   line: {
-    width: '35%',
+    width: "35%",
     height: 1,
     backgroundColor: colors.somon,
     margin: 10,
   },
   iconContainer: {
-    width: '50%',
-    padding: '2%',
+    width: "50%",
+    padding: "2%",
   },
 });
 const mapStateToProps = ({authResponse}) => {

@@ -1,14 +1,12 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const controllers = require("../controllers/users.controller"); //check if the naming is working
-
-//campaign
-router.route("/").get(controllers.getMany).post(controllers.createOne);
+const controllers = require('../controllers/places.controller');
+router.route('/').get(controllers.getMany).post(controllers.createOne);
 
 //api/item.:id
 
 router
-  .route("/:id")
+  .route('/:id')
   .get(controllers.getOne)
   .patch(controllers.updateOne)
   .delete(controllers.removeOne);

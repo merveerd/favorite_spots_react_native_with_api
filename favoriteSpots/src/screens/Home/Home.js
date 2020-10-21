@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from "react";
 import {
   View,
   FlatList,
@@ -7,36 +7,37 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StatusBar,
-} from 'react-native';
-import {connect} from 'react-redux';
-import Place from '../Places/Place';
+} from "react-native";
+import {connect} from "react-redux";
+import Place from "../Places/Place";
 import {
   getMyPlaces,
   getFriendGroups,
   getFriendGroupsPlaces,
-} from '../../actions';
+} from "../../actions";
 //import {AuthContext} from '../../context';
-import {fonts, colors} from '../../style';
+import {fonts, colors} from "../../style";
 const Home = (props) => {
   const [groupPlaces, setGroupPlaces] = useState([]);
 
   useEffect(() => {
+    console.log("user home", props.user);
     if (props.friendGroups.length === 0) {
       //I will move it to sign In button straight away
 
-      console.log('no friend group');
+      console.log("no friend group");
 
       props.getFriendGroups(props.user);
     }
     if (props.myPlaces.length === 0) {
       //for adding new place also the user should come to home first so it is safe to check its length
-      console.log('no favorite place');
+      console.log("no favorite place");
       props.getMyPlaces(props.user.uid);
     }
   }, []);
 
   useEffect(() => {
-    console.log('added FRIEND GRIOUPS');
+    console.log("added FRIEND GRIOUPS");
     if (props.myGroupPlaces.length === 0 && props.friendGroups) {
       props.friendGroups.forEach((group) => {
         props.getFriendGroupsPlaces({id: group.id}); //can be onsnapshot
@@ -52,9 +53,9 @@ const Home = (props) => {
   return (
     <SafeAreaView>
       <StatusBar backgroundColor={colors.blue} />
-      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+      <View style={{flexDirection: "row", justifyContent: "space-between"}}>
         <FlatList
-          style={{flex: 1, backgroundColor: 'white'}}
+          style={{flex: 1, backgroundColor: "white"}}
           data={allPlaces}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({item, index}) => (

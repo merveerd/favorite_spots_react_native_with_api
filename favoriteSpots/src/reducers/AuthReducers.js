@@ -6,7 +6,7 @@ import {
   UPDATE_USER_START,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_FAILED,
-} from '../actions/types';
+} from "../actions/types";
 
 const INITIAL_STATE = {
   loading: false,
@@ -21,6 +21,7 @@ export default (state = INITIAL_STATE, action) => {
         loading: true,
       };
     case LOGIN_SUCCESS:
+      console.log("action.payload user", action.payload);
       return {
         ...state,
         loading: false,

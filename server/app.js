@@ -16,8 +16,8 @@ app.use(bodyParser.json());
 //Auth Routes
 app.post('/signup', signup);
 app.post('/signin', signin);
-
-app.use('/', protect);
+app.get('/', protect);
+//app.use('/', protect); //in this react native project react native router is checking if the user is authorized before showing the other screens so no need to check this on each request
 // Sub Routes
 const usersRoute = require('./routes/users.router');
 app.use('/users', usersRoute);
