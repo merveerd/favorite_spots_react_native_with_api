@@ -1,4 +1,5 @@
 import {
+  GROUP_START,
   GROUP_GET_SUCCESS,
   GROUP_GET_FAILED,
   GROUP_ADD_SUCCESS,
@@ -14,6 +15,12 @@ const INITIAL_STATE = {
 };
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case GROUP_START:
+      return {
+        ...state,
+        loadingFriendGroups: true,
+      };
+
     case GROUP_GET_SUCCESS:
       return {
         ...state,
@@ -36,6 +43,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
       };
+
     case GROUP_UPDATE_SUCCESS:
       const updatedGroup = action.payload;
       let arrUpdating = state.friendGroups.slice();
@@ -48,11 +56,13 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         friendGroups: arrUpdating, //will be in the front end just for the person who is in session. as that person will be in that group in any condition
+        loadingFriendGroups: false,
       };
 
     case GROUP_UPDATE_FAILED: //there can be back up to handle this situation on actions
       return {
         ...state,
+        loadingFriendGroups: false,
       };
     case RESET_FRIEND_GROUPS:
       return {

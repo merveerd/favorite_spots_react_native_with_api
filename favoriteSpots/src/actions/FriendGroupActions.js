@@ -1,4 +1,5 @@
 import {
+  GROUP_START,
   GROUP_ADD_SUCCESS,
   GROUP_ADD_FAILED,
   GROUP_GET_SUCCESS,
@@ -28,6 +29,7 @@ const respondCreateFriendGroup = (response, status, dispatch) => {
 };
 export const createFriendGroup = (params) => {
   return (dispatch) => {
+    dispatch({type: GROUP_START});
     //update user friend group
     patch(
       BASE_URL.concat(`/users/${params.userid}`),
@@ -51,7 +53,7 @@ const respondGetFriendGroup = (response, status, dispatch) => {
 
     dispatch({
       type: GROUP_GET_SUCCESS,
-      payload: response,
+      payload: response.data,
     });
   } else {
     dispatch({
@@ -61,12 +63,13 @@ const respondGetFriendGroup = (response, status, dispatch) => {
 };
 export const getFriendGroups = (param) => {
   return (dispatch) => {
+    dispatch({type: GROUP_START});
     //param should contain groupIds of the user in array format
     get(
-      BASE_URL.concat(`/friendgroups`),
+      BASE_URL.concat(`/friendgroups/manyById`),
       respondGetFriendGroup,
       dispatch,
-      param.groupIds,
+      param,
     );
   };
 };
@@ -76,7 +79,7 @@ const respondUpdateFriendGroup = (response, status, dispatch) => {
 
     dispatch({
       type: GROUP_UPDATE_SUCCESS,
-      payload: response,
+      payload: response.data,
     });
 
     Alert.alert(
@@ -99,12 +102,16 @@ const respondUpdateFriendGroup = (response, status, dispatch) => {
     console.log("Read Data error updateFriendGroup: ", response);
   }
 };
+
 export const updateFriendGroup = (param) => {
   //param should contain friendgroup id
-  patch(
-    BASE_URL.concat(`/friendgroups/${param.id}`),
-    respondUpdateFriendGroup,
-    dispatch,
-    param.id,
-  );
+  return (dispatch) => {
+    dispatch({type: GROUP_START});
+    patch(
+      BASE_URL.concat(`/friendgroups/${param.id}`),
+      respondUpdateFriendGroup,
+      dispatch,
+      param.id,
+    );
+  };
 };

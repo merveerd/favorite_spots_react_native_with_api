@@ -33,7 +33,7 @@ const respondLoginAction = async (response, status, dispatch) => {
       payload: response.data.user,
     });
 
-    RootNavigation.replace("Home");
+    // RootNavigation.replace("Home");
 
     USER.token = response.data.token;
 

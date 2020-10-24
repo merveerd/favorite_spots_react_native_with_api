@@ -11,13 +11,7 @@ import {
   StatusBar,
   Modal,
 } from "react-native";
-import MapView, {
-  PROVIDER_GOOGLE,
-  Marker,
-  Callout,
-  Polygon,
-  Circle,
-} from "react-native-maps";
+import MapView, {PROVIDER_GOOGLE, Marker, Callout} from "react-native-maps";
 import {request, PERMISSIONS} from "react-native-permissions";
 import Geolocation from "@react-native-community/geolocation";
 //import Carousel from 'react-native-snap-carousel';
@@ -74,8 +68,6 @@ class AddLocation extends Component {
     };
 
     ImagePicker.showImagePicker(options, async (response) => {
-      console.log("Response = ", response);
-
       if (response.didCancel) {
         console.log("User cancelled image picker");
       } else if (response.error) {
@@ -104,14 +96,14 @@ class AddLocation extends Component {
   requestLocationPermission = async () => {
     if (Platform.OS === "ios") {
       var response = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-      console.log("iPhone: " + response);
+      //   console.log("iPhone: " + response);
 
       if (response === "granted") {
         this.locateCurrentPosition();
       }
     } else {
       var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-      console.log("Android: " + response);
+      // console.log("Android: " + response);
 
       if (response === "granted") {
         this.locateCurrentPosition();
@@ -122,8 +114,6 @@ class AddLocation extends Component {
   locateCurrentPosition = () => {
     Geolocation.getCurrentPosition(
       (position) => {
-        console.log(JSON.stringify(position));
-
         let initialPosition = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -162,7 +152,6 @@ class AddLocation extends Component {
     )
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("responseJson", responseJson);
         const selectedAdress = responseJson.results[0].formatted_address;
 
         this.setState({
@@ -173,13 +162,11 @@ class AddLocation extends Component {
           },
           regionChangeProgress: false,
         });
-        console.log("selected pos", this.state.selectedLocation);
       });
   };
 
   // Update state on region change
   onRegionChange = (region) => {
-    console.log("onRegionChange", region);
     this.setState(
       {
         region,
@@ -301,6 +288,7 @@ class AddLocation extends Component {
             </View>
           </View>
         ) : (
+          //BACK Butonu ekle resmi degistirmek icin
           <View>
             <Image
               source={{uri: this.state.image}}
@@ -329,8 +317,6 @@ class AddLocation extends Component {
               style={styles.customButtonAdd}
               text={"Add in your favorites!"}
               onPress={() => {
-                console.log("this.state.image", this.state.image);
-                console.log("user", this.props.user, this.props.user._id);
                 const params = {
                   place: {
                     placeName: null, //there should be original name if there is any, to keep track how many people liked it
@@ -341,12 +327,11 @@ class AddLocation extends Component {
                   },
                   user: this.props.user,
                 };
-                console.log(params);
+
                 //comment could be available when it is open to friendList/friendGroup friend degilken sadece kac tane favori place I var  onu gorebiliyosun.
                 if (this.state.desc) {
                   this.props.addPersonalPlace(params);
                   this.setState({image: null});
-                  console.log("after post", this.state.image);
                 } else {
                   Alert.alert(
                     "Hey",

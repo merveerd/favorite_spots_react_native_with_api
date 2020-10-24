@@ -6,25 +6,25 @@ import {connect} from "react-redux";
 import * as RootNavigation from "../../RootNavigation.js";
 const Place = (props) => {
   //icon section will be added when friendGroup places available
-  const {image, placeName, user, desc, createdDate} = props.data;
+  const {image, placeName, desc, createdDate} = props.data;
 
   // const [groupNames, setGroupNames] = useState([]);
 
-  const SharedFriendGroups = () => {
-    let groupNames = [];
-    props.data.friendGroups.forEach((item, index) => {
-      props.friendGroups.forEach((group) => {
-        if (group.id === item) {
-          groupNames.push(group.name);
-        }
-      });
-    });
-    return groupNames.map((groupName, index) => (
-      <Text key={index} style={{fontSize: 12, margin: 5, color: colors.purple}}>
-        {groupName}
-      </Text>
-    ));
-  };
+  // const SharedFriendGroups = () => {
+  //   let groupNames = [];
+  //   props.data.friendGroups.forEach((item, index) => {
+  //     props.friendGroups.forEach((group) => {
+  //       if (group.id === item) {
+  //         groupNames.push(group.name);
+  //       }
+  //     });
+  //   });
+  //   return groupNames.map((groupName, index) => (
+  //     <Text key={index} style={{fontSize: 12, margin: 5, color: colors.purple}}>
+  //       {groupName}
+  //     </Text>
+  //   ));
+  // };
   return (
     <TouchableOpacity
       activeOpacity={1}

@@ -16,7 +16,7 @@ import {colors, fonts, appName} from "../../style";
 
 const SignUp = (props) => {
   const [name, setName] = useState("test");
-  const [username, setUsername] = useState("test1");
+  const [username, setUsername] = useState("test");
   const [email, setEmail] = useState("test@test.com");
   const [password, setPassword] = useState("123456");
 

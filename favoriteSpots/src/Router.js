@@ -307,9 +307,8 @@ const TabStackScreen = () => {
 
 const DrawerStack = createDrawerNavigator();
 const DrawerStackScreen = (props) => {
-  const [additonalProps, setAdditionalProps] = React.useState(
-    props.route.params.name,
-  );
+  console.log("drawer stack screen", props);
+
   let name = props.route.params.name;
   return (
     <DrawerStack.Navigator
