@@ -65,24 +65,10 @@ const PlaceDetails = (props) => {
           onPress={() => {
             setDisabled(true);
 
-            if (placeInfo.friendGroups) {
-              if (!placeInfo.friendGroups.includes(item.id)) {
-                props.addGroupPlace({
-                  placeId: placeInfo.id,
-                  friendGroupId: item.id,
-                });
-              } else {
-                Alert.alert(
-                  "Nope",
-                  "You have already shared this place with this friend hub",
-                );
-              }
-            } else {
-              props.addGroupPlace({
-                placeId: placeInfo.id,
-                friendGroupId: item.id,
-              });
-            }
+            props.addGroupPlace({
+              place: placeInfo,
+              friendGroup: item,
+            });
           }}></Button>
       </View>
     </View>

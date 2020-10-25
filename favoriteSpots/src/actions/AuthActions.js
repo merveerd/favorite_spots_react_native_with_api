@@ -1,5 +1,3 @@
-import auth from "@react-native-firebase/auth";
-import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import AsyncStorage from "@react-native-community/async-storage";
 import * as Keychain from "react-native-keychain";
@@ -22,27 +20,21 @@ import {
 
 import {Alert} from "react-native";
 import {post, get, patch} from "./APIService";
-import * as RootNavigation from "../RootNavigation";
 
 const respondLoginAction = async (response, status, dispatch) => {
   if (status) {
-    console.log("respondLoginAction", response.data.user);
-
     dispatch({
       type: LOGIN_SUCCESS,
       payload: response.data.user,
     });
 
-    // RootNavigation.replace("Home");
-
     USER.token = response.data.token;
 
     // await Keychain.setGenericPassword(LOCAL_AUTH_ID, response.data.token);
     // const credentials = Keychain.getGenericPassword();
-    //console.log("credentials", credentials);
+
     AsyncStorage.setItem(LOCAL_AUTH_ID, response.data.token);
     let token = await AsyncStorage.getItem(LOCAL_AUTH_ID);
-    console.log("async token setted", token);
   } else {
     console.log("Gelen POST Hatalı respondLoginAction: => ", response);
     Alert.alert("WARNING", "Something bad happened!");
@@ -101,7 +93,7 @@ const respondUpdateUser = (response, status, dispatch) => {
   } else {
     console.log("Gelen POST Hatalı respondUpdateUser: => ", response);
     Alert.alert("WARNING", "Something bad happened!");
-    dispatch({type: LOGIN_FAILED});
+    dispatch({type: UPDATE_USER_FAILED});
   }
 };
 
@@ -133,7 +125,6 @@ export const updateUserProfile = (params) => {
 
 const getUser = (response, status, dispatch) => {
   if (status) {
-    console.log(response);
     dispatch({type: LOGIN_SUCCESS, payload: response.data.user});
   } else {
     console.log("Read Data error get User: ", response);

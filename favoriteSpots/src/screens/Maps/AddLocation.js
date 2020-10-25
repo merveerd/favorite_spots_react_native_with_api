@@ -327,7 +327,7 @@ class AddLocation extends Component {
                   },
                   user: this.props.user,
                 };
-
+                console.log("add location", params);
                 //comment could be available when it is open to friendList/friendGroup friend degilken sadece kac tane favori place I var  onu gorebiliyosun.
                 if (this.state.desc) {
                   this.props.addPersonalPlace(params);
