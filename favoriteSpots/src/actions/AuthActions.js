@@ -101,18 +101,20 @@ export const updateUserProfile = (params) => {
   return (dispatch) => {
     dispatch({type: UPDATE_USER_START});
     if (params.image) {
-      let userId = params.id;
-      const reference = storage().ref(`/users/${userId}`); //still using the firebase for image storage
+      console.log(params);
+      let userId = params._id;
+      const reference = storage().ref(`/users/profile/${userId}`); //still using the firebase for image storage
 
       reference
         .putFile(params.image)
         .then(() => {
           reference.getDownloadURL().then((imageURL) => {
+            params.image = imageURL;
             patch(
               BASE_URL.concat(`/users/${userId}`),
               respondUpdateUser,
               dispatch,
-              {image: imageURL},
+              params,
             );
           });
         })
