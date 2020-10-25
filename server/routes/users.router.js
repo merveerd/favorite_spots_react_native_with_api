@@ -10,5 +10,6 @@ router
   .route('/:id')
   .get(controllers.getOne)
   .patch(controllers.updateOne)
+  .post(controllers.updateSubDoc)
   .delete(controllers.removeOne);
 module.exports = router;

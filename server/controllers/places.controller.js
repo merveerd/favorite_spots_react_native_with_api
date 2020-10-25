@@ -1,4 +1,4 @@
-const crudControllers = require("../Utils/crud");
-const places = require("../models/places.model");
+// const crudControllers = require("../Utils/crud");
+// const places = require("../models/places.model");
 
-module.exports = crudControllers(places);
+// module.exports = crudControllers(places);

@@ -23,5 +23,5 @@ const PlacesSchema = new mongoose.Schema({
 //     name : String,
 //     favoriteFoods : Array
 // }
-
-module.exports = mongoose.model('Places', PlacesSchema);
+module.exports = PlacesSchema;
+// module.exports = mongoose.model('Places', PlacesSchema);

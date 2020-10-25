@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { isEmail } = require('validator');
+const PlacesSchema = require('./places.model');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
@@ -19,7 +20,7 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true },
   image: { type: String, required: false },
   friendgroups: { type: Array, required: false, default: [] },
-  places: { type: Array, required: false, default: [] },
+  places: [PlacesSchema],
 });
 
 // fire a function before doc saved to db

@@ -55,17 +55,38 @@ const createOne = (model) => async (req, res) => {
 
 const updateOne = (model) => async (req, res) => {
   try {
+    console.log('patch', req.body);
     let keys = Object.keys(req.body), //check this if it right
       updateObject = {};
     keys.forEach((item) => {
       updateObject[item] = req.body[item];
     });
-    const doc = await model.updateOne(
+    const doc = await model.findOneAndUpdate(
       //check if name conflict will be there
       { _id: req.params.id },
-      { $set: updateObject }
+      { $set: updateObject },
+      { new: true }
     );
+    console.log('doc', doc);
     res.status(200).json(doc);
+  } catch (err) {
+    console.log('patch', err);
+    res.status(404).json({ message: err });
+  }
+};
+const updateSubDoc = (model) => async (req, res) => {
+  //req has id, arr, data
+  try {
+    const id = req.body.id;
+    const updatedArray = req.body.arr; // arr is the key name such as 'places'
+    const doc = await model.findById(id);
+
+    doc[updatedArray].push(req.body.data);
+    doc.save((err, obj) => {
+      if (err) res.send('updateSubDoc err', err);
+      console.log('obj', obj);
+      res.json({ obj });
+    });
   } catch (err) {
     res.status(404).json({ message: err });
   }
@@ -102,5 +123,6 @@ module.exports = function crudControllers(model) {
     removeOne: removeOne(model),
     getManyById: getManyById(model),
     updateArrayInOne: updateArrayInOne(model),
+    updateSubDoc: updateSubDoc(model),
   };
 };

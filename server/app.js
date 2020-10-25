@@ -22,8 +22,8 @@ app.get('/', protect);
 const usersRoute = require('./routes/users.router');
 app.use('/users', usersRoute);
 
-const placesRoute = require('./routes/places.router');
-app.use('/places', placesRoute);
+// const placesRoute = require('./routes/places.router');
+// app.use('/places', placesRoute);
 
 const messagesRoute = require('./routes/messages.router');
 app.use('/messages', messagesRoute);
