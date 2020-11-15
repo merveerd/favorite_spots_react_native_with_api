@@ -15,7 +15,7 @@ import {
   GET_GROUP_PLACE_SUCCESS,
   GET_GROUP_PLACE_FAILED,
   RESET_PLACES,
-} from '../actions/types';
+} from "../actions/types";
 
 const INITIAL_STATE = {
   loadingList: false,
@@ -60,20 +60,19 @@ export default (state = INITIAL_STATE, action) => {
       if (updatingIndex !== -1) {
         if (arrUpdating[updatingIndex].friendGroups) {
           console.log(
-            'mevcut friend group',
+            "mevcut friend group",
             arrUpdating[updatingIndex].friendGroups,
           );
 
           updatedPlace = arrUpdating[updatingIndex].friendGroups.push(
             updatingObj.friendGroupId,
           );
-          console.log('pustan sonra', arrUpdating);
         } else {
-          console.log('else no friend group place');
+          console.log("else no friend group place");
           arrUpdating[updatingIndex].friendGroups = [updatingObj.friendGroupId];
         }
       } else {
-        console.log('no recorded place with this id');
+        console.log("no recorded place with this id");
       }
       return {
         ...state,
@@ -141,7 +140,6 @@ export default (state = INITIAL_STATE, action) => {
       };
 
     case RESET_PLACES:
-      console.log(RESET_PLACES);
       return {
         ...state,
         myPlaces: [],

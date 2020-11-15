@@ -21,7 +21,6 @@ export default (state = INITIAL_STATE, action) => {
         loading: true,
       };
     case LOGIN_SUCCESS:
-      console.log("action.payload user", action.payload);
       return {
         ...state,
         loading: false,

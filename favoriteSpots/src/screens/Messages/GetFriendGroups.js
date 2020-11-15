@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect} from "react";
 import {
   View,
   Text,
@@ -7,14 +7,13 @@ import {
   ActivityIndicator,
   Alert,
   TouchableOpacity,
-} from 'react-native';
-import {connect} from 'react-redux';
-import {getFriendGroups, startRoom} from '../../actions';
+} from "react-native";
+import {connect} from "react-redux";
+import {getFriendGroups, startRoom} from "../../actions";
 
 const GetFriendGroups = (props) => {
   useEffect(() => {
     if (props.friendGroups.length === 0) {
-      console.log('useEffect friendgroups');
       props.getFriendGroups(props.user);
     }
   }, []);
@@ -22,15 +21,13 @@ const GetFriendGroups = (props) => {
   return (
     <View style={{flex: 1}}>
       <FlatList
-        style={{flex: 1, backgroundColor: 'white'}}
+        style={{flex: 1, backgroundColor: "white"}}
         data={props.friendGroups}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({item, index}) => {
           return (
             <TouchableOpacity
               onPress={() => {
-                console.log('path: ', item.id); //friend group id
-
                 const path = item.id;
                 const params = {
                   createdDate: new Date(),
@@ -40,13 +37,13 @@ const GetFriendGroups = (props) => {
                   path,
                 };
                 props.startRoom(path, params);
-                props.navigation.navigate('MessageDetails', {path});
+                props.navigation.navigate("MessageDetails", {path});
               }}
               style={{
-                flexDirection: 'row',
+                flexDirection: "row",
                 margin: 10,
                 borderBottomWidth: 0.4,
-                borderBottomColor: 'gray',
+                borderBottomColor: "gray",
               }}>
               {
                 /* <Image
@@ -56,7 +53,7 @@ const GetFriendGroups = (props) => {
               }
 
               <View style={{padding: 10}}>
-                <Text style={{fontWeight: 'bold', fontSize: 16}}>
+                <Text style={{fontWeight: "bold", fontSize: 16}}>
                   {item.name}
                 </Text>
               </View>

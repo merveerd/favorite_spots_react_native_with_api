@@ -30,6 +30,7 @@ export const ADD_GROUP_PLACE_FAILED = "add_group_failed";
 
 export const USERS_LOADED = "users_loaded";
 export const USERS_FAILED = "users_failed";
+export const USERS_LOADING_START = "users_loading_start";
 export const ADD_USER_SUCCESS = "add_user_success";
 export const ADD_USER_FAILED = "add_user_failed";
 

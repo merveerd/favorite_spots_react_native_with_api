@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect} from "react";
 import {
   View,
   Image,
@@ -8,27 +8,18 @@ import {
   FlatList,
   StatusBar,
   TouchableOpacity,
-} from 'react-native';
-import {connect} from 'react-redux';
-import {Icon, Input, Item, Thumbnail, Text} from 'native-base';
-import {getUsers} from '../../actions';
-import {fonts, colors} from '../../style';
-import * as RootNavigation from '../../RootNavigation';
+} from "react-native";
+import {connect} from "react-redux";
+import {Icon, Input, Item, Thumbnail, Text} from "native-base";
+import {getUsers} from "../../actions";
+import {fonts, colors} from "../../style";
+import * as RootNavigation from "../../RootNavigation";
 const Search = (props) => {
   //places or user search
 
-  const [results, setResults] = useState([]);
-
-  const searchUser = (text) => {
-    if (props.users.length === 0) {
-      props.getUsers();
-    } else {
-      let arr = props.users.filter(
-        (i) =>
-          i.name.toLowerCase().includes(text.toLowerCase()) &&
-          i.username !== props.user.username,
-      );
-      setResults(arr.slice(0, 5));
+  const searchUser = async (text) => {
+    if (text.length >= 3) {
+      props.getUsers({query: text});
     }
   };
 
@@ -36,16 +27,16 @@ const Search = (props) => {
     <View style={styles.item}>
       <TouchableOpacity
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
+          flexDirection: "row",
+          alignItems: "center",
           borderBottomWidth: 0.5,
           borderColor: colors.somon,
         }}
         onPress={() => {
-          RootNavigation.navigate('UserDetails', item);
+          RootNavigation.navigate("UserDetails", item);
         }}>
-        <Thumbnail source={require('../../assets/dummy.png')}></Thumbnail>
-        <Text style={styles.text}>{item.name}</Text>
+        <Thumbnail source={require("../../assets/dummy.png")}></Thumbnail>
+        <Text style={styles.text}>{item.username}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -62,7 +53,7 @@ const Search = (props) => {
           />
         </Item>
         <FlatList
-          data={results}
+          data={props.users.slice(0, 7)}
           renderItem={renderItem}
           keyExtractor={(item, index) => `${index}`}></FlatList>
       </View>

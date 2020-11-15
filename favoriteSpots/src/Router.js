@@ -35,13 +35,10 @@ import PlaceDetails from "./screens/Places/PlaceDetails";
 import PlaceList from "./screens/Places/PlaceList";
 
 import Search from "./screens/Search/Search";
-import SearchResults from "./screens/Search/SearchResults";
-
 import Settings from "./screens/Settings/Settings";
 
 import {navigationRef} from "./RootNavigation";
 import {colors, fonts} from "./style";
-import {color} from "react-native-reanimated";
 
 const menu = (navigation) => {
   return (

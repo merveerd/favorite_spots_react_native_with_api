@@ -1,4 +1,5 @@
 import {
+  USERS_LOADING_START,
   USERS_LOADED,
   USERS_FAILED,
   ADD_USER_SUCCESS,
@@ -7,7 +8,7 @@ import {
   REMOVE_USER_SUCCESS,
   REMOVE_USER_FAILED,
   RESET_USERS,
-} from '../actions/types';
+} from "../actions/types";
 
 const INITIAL_STATE = {
   users: [],
@@ -15,15 +16,23 @@ const INITIAL_STATE = {
 };
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case USERS_LOADING_START:
+      return {
+        ...state,
+        loadingUser: true,
+      };
+
     case USERS_LOADED:
       return {
         ...state,
         users: [...action.payload], //send the object accordingly
+        loadingUser: false,
       };
 
     case USERS_FAILED: //there can be back up to handle this situation on actions
       return {
         ...state,
+        loadingUser: false,
       };
 
     case ADD_USER_SUCCESS: //when registration happens

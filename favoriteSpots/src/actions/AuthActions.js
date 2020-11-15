@@ -34,9 +34,8 @@ const respondLoginAction = async (response, status, dispatch) => {
     // const credentials = Keychain.getGenericPassword();
 
     AsyncStorage.setItem(LOCAL_AUTH_ID, response.data.token);
-    let token = await AsyncStorage.getItem(LOCAL_AUTH_ID);
   } else {
-    console.log("Gelen POST Hatalı respondLoginAction: => ", response);
+    console.log("post error respondLoginAction: => ", response);
     Alert.alert("WARNING", "Something bad happened!");
     dispatch({type: LOGIN_FAILED});
   }
@@ -83,7 +82,6 @@ export const login = (params) => {
 
 const respondUpdateUser = (response, status, dispatch) => {
   if (status) {
-    console.log("respondUpdateUser", response.data);
     dispatch({
       type: UPDATE_USER_SUCCESS,
       payload: response.data,
@@ -91,7 +89,7 @@ const respondUpdateUser = (response, status, dispatch) => {
 
     Alert.alert("updated", "Your profile image is updated!");
   } else {
-    console.log("Gelen POST Hatalı respondUpdateUser: => ", response);
+    console.log("post error respondUpdateUser: => ", response);
     Alert.alert("WARNING", "Something bad happened!");
     dispatch({type: UPDATE_USER_FAILED});
   }
@@ -101,7 +99,6 @@ export const updateUserProfile = (params) => {
   return (dispatch) => {
     dispatch({type: UPDATE_USER_START});
     if (params.image) {
-      console.log(params);
       let userId = params._id;
       const reference = storage().ref(`/users/profile/${userId}`); //still using the firebase for image storage
 

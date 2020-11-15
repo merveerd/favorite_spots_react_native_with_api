@@ -11,23 +11,21 @@ export const get = async (
 ) => {
   // const credentials = await Keychain.getGenericPassword();
   let token1 = await AsyncStorage.getItem(LOCAL_AUTH_ID);
-  console.log("token", token1);
+
   return axios
     .request({
       method: "GET",
       url: requestMethod,
-      // data: requestParams ? requestParams : null, //check if it is working
       responseType: "json",
       headers: {
         authorization: "Bearer ".concat(token1),
       },
     })
     .then((response) => {
-      console.log("response get", requestMethod, response);
+      //  console.log("response get", requestMethod, response);
       if (response.status < 400) {
         callbackFn(response, true, dispatch);
       } else {
-        console.log("responses other than 201", response);
         callbackFn(response, false, dispatch);
       }
     })
@@ -57,7 +55,7 @@ export const post = async (
       },
     })
     .then((response) => {
-      console.log("response post", requestMethod, response);
+      //console.log("response post", requestMethod, response);
       if (response.status < 400) {
         callbackFn(response, true, dispatch);
       } else {
@@ -118,7 +116,6 @@ export const deleteOne = async (
       data: requestParams,
     })
     .then((response) => {
-      console.log("response delete", requestMethod, response);
       if (response.status < 400) {
         callbackFn(response, true, dispatch);
       } else {

@@ -15,17 +15,16 @@ import {getFriendGroups} from "../../actions";
 import {fonts, colors} from "../../style";
 const Home = (props) => {
   useEffect(() => {
-    console.log("home", props.user);
-    props.getFriendGroups(props.user.friendGroups); //in case of someone else has been added a new place to the friend group, we are updating the friend group data
+    props.getFriendGroups({id: props.user._id}); //in case of someone else has been added a new place to the friend group, we are updating the friend group data
   }, []);
   let onlyPersonalPlaces = [];
-  if (props.user.friendGroups) {
-    onlyPersonalPlaces = props.user.places.filter(function (obj) {
-      return props.friendGroups.places.indexOf(obj) === -1;
-    });
-  } else {
-    onlyPersonalPlaces = props.user.places;
-  }
+  // if (props.friendGroups) {
+  //   onlyPersonalPlaces = props.user.places.filter(function (obj) {
+  //     return props.friendGroups.places.indexOf(obj) === -1;
+  //   });
+  // } else {
+  //   onlyPersonalPlaces = props.user.places;
+  // }
 
   return (
     <SafeAreaView>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState} from "react";
 import {
   View,
   Text,
@@ -11,52 +11,47 @@ import {
   Alert,
   Modal,
   FlatList,
-} from 'react-native';
-import {connect} from 'react-redux';
-import {fonts, colors} from '../../style';
-import {TextInput} from 'react-native-gesture-handler';
-import {Icon} from 'native-base';
+} from "react-native";
+import {connect} from "react-redux";
+import {fonts, colors} from "../../style";
+import {TextInput} from "react-native-gesture-handler";
+import {Icon} from "native-base";
 import {
   createFriendGroup,
   getFriendGroups,
   updateFriendGroup,
-} from '../../actions';
+} from "../../actions";
 
 const UserDetails = (props) => {
   const [createHub, setCreateHubModal] = useState(false);
   const [addInHub, setAddInHub] = useState(false);
-  const [groupName, setGroupName] = useState('');
+  const [groupName, setGroupName] = useState("");
 
   const [results, setResults] = useState([]);
 
   const searchGroup = (text) => {
-    console.log('search group', props.friendGroups);
-    if (props.friendGroups.length === 0) {
-      props.getFriendGroups(props.user);
-    } else {
-      let arr = props.friendGroups.filter((i) =>
-        i.name.toLowerCase().includes(text.toLowerCase()),
-      );
-      setResults(arr.slice(0, 5));
-    }
+    //local search
+    let arr = props.friendGroups.filter((i) =>
+      i.name.toLowerCase().includes(text.toLowerCase()),
+    );
+    setResults(arr.slice(0, 5));
   };
 
   const renderItem = ({item}) => (
     <View style={styles.item}>
       <TouchableOpacity
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
+          flexDirection: "row",
+          alignItems: "center",
           borderBottomWidth: 0.5,
           borderColor: colors.somon,
         }}
         onPress={() => {
-          if (!item.members.includes(props.route.params.uid)) {
-            item.members.push(props.route.params.uid);
-
+          if (!item.members.includes(props.route.params._id)) {
+            item.members.push(props.route.params._id);
             props.updateFriendGroup(item); //sending updated friend group
           } else {
-            Alert.alert('warning', 'this person is already in this hub!');
+            Alert.alert("warning", "this person is already in this hub!");
           }
         }}>
         <Text style={styles.text}>{item.name}</Text>
@@ -70,7 +65,7 @@ const UserDetails = (props) => {
       <View style={styles.info}>
         <Image
           style={styles.avatar}
-          source={{uri: 'https://bootdey.com/img/Content/avatar/avatar3.png'}}
+          source={{uri: "https://bootdey.com/img/Content/avatar/avatar3.png"}}
         />
 
         <Text style={styles.name}>{props.route.params.name}</Text>
@@ -98,7 +93,7 @@ const UserDetails = (props) => {
           transparent={true}
           animationType="slide"
           onRequestClose={() => {
-            console.warn('close model');
+            console.warn("close model");
           }}
           visible={createHub}>
           <View style={styles.modalView}>
@@ -125,23 +120,16 @@ const UserDetails = (props) => {
                       (group) => group.name !== groupName,
                     )
                   ) {
-                    console.log(
-                      'user',
-                      props.user,
-                      'added user',
-                      props.route.params,
-                    );
                     props.createFriendGroup({
                       name: groupName,
-                      admin: props.user.uid,
-                      members: [props.user.uid, props.route.params.uid],
+                      admin: props.user._id,
+                      members: [props.user._id, props.route.params._id],
                     });
                     setCreateHubModal(false);
-                    Alert.alert('Good!', 'You have started something!');
                   } else {
                     Alert.alert(
-                      'Warning',
-                      'Please enter a group name that you are not a member of',
+                      "Warning",
+                      "Please enter a group name that you are not a member of",
                     );
                   }
                 }}>
@@ -186,16 +174,16 @@ const styles = StyleSheet.create({
     height: 200,
   },
   info: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   avatar: {
     width: 130,
     height: 130,
     borderRadius: 63,
     borderWidth: 4,
-    borderColor: 'white',
+    borderColor: "white",
     marginBottom: 10,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: -60,
   },
   name: {
@@ -203,37 +191,37 @@ const styles = StyleSheet.create({
   },
   body: {
     padding: 30,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonContainer: {
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 10,
     height: 45,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 20,
     width: 250,
     borderRadius: 30,
     backgroundColor: colors.somon,
   },
   customInput: {
-    width: '60%',
-    height: '40%',
+    width: "60%",
+    height: "40%",
     borderRadius: 30,
-    textAlign: 'center',
+    textAlign: "center",
 
     backgroundColor: colors.blue,
     fontSize: fonts.medium,
   },
   modalView: {
-    marginTop: Dimensions.get('window').height / 2,
-    maxHeight: Dimensions.get('window').height / 2,
+    marginTop: Dimensions.get("window").height / 2,
+    maxHeight: Dimensions.get("window").height / 2,
     backgroundColor: colors.somon,
   },
   modalItems: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   closeModal: {
     marginRight: 0,

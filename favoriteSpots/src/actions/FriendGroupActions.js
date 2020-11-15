@@ -15,13 +15,14 @@ import * as RootNavigation from "../RootNavigation";
 
 const respondCreateFriendGroup = (response, status, dispatch) => {
   if (status) {
-    let newGroup = {...response}; //id should be in the response, I keep id all the time in redux
+    Alert.alert("Good!", "You have started something!");
+    let newGroup = {...response.data};
     dispatch({
       type: GROUP_ADD_SUCCESS,
       payload: newGroup,
     });
   } else {
-    console.log("friend group is not added: ", err);
+    console.log("friend group has not been added: ", err);
     dispatch({
       type: GROUP_ADD_FAILED,
     });
@@ -30,27 +31,18 @@ const respondCreateFriendGroup = (response, status, dispatch) => {
 export const createFriendGroup = (params) => {
   return (dispatch) => {
     dispatch({type: GROUP_START});
-    //update user friend group
-    patch(
-      BASE_URL.concat(`/users/${params.userid}`),
-      respondCreateFriendGroup,
-      dispatch,
-      params.friendGroup.id,
-    );
     //add in
     post(
       BASE_URL.concat("/friendgroups"),
       respondCreateFriendGroup,
       dispatch,
-      params.friendGroup,
+      params,
     );
   };
 };
 
 const respondGetFriendGroup = (response, status, dispatch) => {
   if (status) {
-    console.log("respondGetFriendGroup", response); //revise according to the response
-
     dispatch({
       type: GROUP_GET_SUCCESS,
       payload: response.data,
@@ -66,7 +58,7 @@ export const getFriendGroups = (param) => {
     dispatch({type: GROUP_START});
     //param should contain groupIds of the user in array format
     get(
-      BASE_URL.concat(`/friendgroups/manyById`),
+      BASE_URL.concat(`/friendgroups/byUserId/${param.id}`),
       respondGetFriendGroup,
       dispatch,
       param,
@@ -75,8 +67,6 @@ export const getFriendGroups = (param) => {
 };
 const respondUpdateFriendGroup = (response, status, dispatch) => {
   if (status) {
-    console.log("respondUpdateFriendGroup", response); //revise according to the response
-
     dispatch({
       type: GROUP_UPDATE_SUCCESS,
       payload: response.data,
@@ -99,7 +89,7 @@ const respondUpdateFriendGroup = (response, status, dispatch) => {
     dispatch({
       type: GROUP_UPDATE_FAILED,
     });
-    console.log("Read Data error updateFriendGroup: ", response);
+    console.log("Error on updateFriendGroup: ", response);
   }
 };
 
@@ -108,10 +98,10 @@ export const updateFriendGroup = (param) => {
   return (dispatch) => {
     dispatch({type: GROUP_START});
     patch(
-      BASE_URL.concat(`/friendgroups/${param.id}`),
+      BASE_URL.concat(`/friendgroups/${param._id}`),
       respondUpdateFriendGroup,
       dispatch,
-      param.id,
+      param,
     );
   };
 };

@@ -33,7 +33,6 @@ export default (state = INITIAL_STATE, action) => {
 
     case GROUP_ADD_SUCCESS:
       const newGroup = action.payload; //send the object accordingly
-      console.log("Reducer newGroup", newGroup);
       return {
         ...state,
         friendGroups: [...state.friendGroups, newGroup], //will be in the front end just for the person who is in session. as that person will be in that group in any condition
@@ -50,7 +49,6 @@ export default (state = INITIAL_STATE, action) => {
       const updateIndex = state.friendGroups.findIndex(
         (group) => group.name === action.payload.name,
       );
-      console.log("updateIndex", updateIndex);
       arrUpdating.splice(updateIndex, 1, updatedGroup);
 
       return {

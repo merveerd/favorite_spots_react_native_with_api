@@ -1,34 +1,28 @@
 import {
+  USERS_LOADING_START,
   USERS_LOADED,
   USERS_FAILED,
-  ADD_USER_SUCCESS,
-  ADD_USER_FAILED,
-  REMOVE_USER_START,
-  REMOVE_USER_SUCCESS,
-  REMOVE_USER_FAILED,
-} from './types';
-import firestore from '@react-native-firebase/firestore';
+  BASE_URL,
+} from "./types";
 
+import {post} from "./APIService";
+
+const respondGetUsers = (response, status, dispatch) => {
+  if (status) {
+    dispatch({
+      type: USERS_LOADED,
+      payload: response.data,
+    });
+  } else {
+    console.log("error respondGetUsers: ", response);
+    dispatch({
+      type: USERS_FAILED,
+    });
+  }
+};
 export const getUsers = (params) => {
   return (dispatch) => {
-    firestore()
-      .collection('Users')
-      .get()
-      .then((data) => {
-        let users = [];
-        data._docs.forEach((user) => {
-          users.push({...user._data, uid: user.id});
-        });
-        dispatch({
-          type: USERS_LOADED,
-          payload: users,
-        });
-      })
-      .catch((err) => {
-        console.log('Read Data error: ', err);
-        dispatch({
-          type: USERS_FAILED,
-        });
-      });
+    dispatch({type: USERS_LOADING_START});
+    post(BASE_URL + "/users/", respondGetUsers, dispatch, params);
   };
 };

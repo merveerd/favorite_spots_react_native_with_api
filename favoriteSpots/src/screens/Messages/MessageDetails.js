@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState} from "react";
 import {
   View,
   Text,
@@ -7,29 +7,28 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
-} from 'react-native';
-import {connect} from 'react-redux';
+} from "react-native";
+import {connect} from "react-redux";
 
-import {Input, Button} from '../../components';
+import {Input, Button} from "../../components";
 
-import {getMessages, addMessages} from '../../actions';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {Icon} from 'native-base';
-import {colors, fonts} from '../../style';
-const {width} = Dimensions.get('window');
+import {getMessages, addMessages} from "../../actions";
+import {TouchableOpacity} from "react-native-gesture-handler";
+import {Icon} from "native-base";
+import {colors, fonts} from "../../style";
+const {width} = Dimensions.get("window");
 
 const MessageDetails = (props) => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
-    console.log('props value: ', props.route.params);
     props.getMessages(props.route.params.data.path);
     //return updateDate function and last message
   }, []);
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
       style={{flex: 1}}>
       <View style={MessageStyle.container}>
         <View style={MessageStyle.messageListContainer}>
@@ -37,20 +36,20 @@ const MessageDetails = (props) => {
             data={props.messages}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item, index}) => {
-              console.log('Liste gelen: ', item);
+              console.log("Liste gelen: ", item);
               let isMe = props.user.username == item.sender.username;
 
-              const user_name = !isMe ? item.sender.name : '';
+              const user_name = !isMe ? item.sender.name : "";
 
               return (
                 <View
                   style={[
                     MessageStyle.messageItemContainer,
-                    {justifyContent: isMe ? 'flex-end' : 'flex-start'},
+                    {justifyContent: isMe ? "flex-end" : "flex-start"},
                   ]}>
                   {isMe ? null : (
                     <View style={MessageStyle.profileCircle}>
-                      <Text style={{color: 'black', fontSize: fonts.small}}>
+                      <Text style={{color: "black", fontSize: fonts.small}}>
                         {user_name}
                       </Text>
                     </View>
@@ -63,7 +62,7 @@ const MessageDetails = (props) => {
                       },
                       MessageStyle.bubleStyle,
                     ]}>
-                    <Text style={{color: 'white'}}>{item.text}</Text>
+                    <Text style={{color: "white"}}>{item.text}</Text>
                   </View>
                 </View>
               );
@@ -83,7 +82,7 @@ const MessageDetails = (props) => {
           />
           <TouchableOpacity
             onPress={() => {
-              console.log('members', props.route.params.data.members);
+              console.log("members", props.route.params.data.members);
               const params = {
                 text: message,
                 createdDate: new Date(),
@@ -91,7 +90,7 @@ const MessageDetails = (props) => {
                 sender: props.user,
               };
               props.addMessages(props.route.params.data.path, params);
-              setMessage('');
+              setMessage("");
             }}
             style={{marginBottom: 10}}>
             <Icon name="send" type="FontAwesome" />
@@ -108,21 +107,21 @@ const MessageStyle = {
     flex: 1,
     borderTopWidth: 1,
     borderTopColor: colors.somon,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 10,
   },
-  messageListContainer: {flex: 15, backgroundColor: 'white'},
+  messageListContainer: {flex: 15, backgroundColor: "white"},
   inputStyle: {width: width - 110, height: 50},
   sendButtonStyle: {width: width / 7, height: width / 7},
-  messageItemContainer: {padding: 10, flexDirection: 'row'},
+  messageItemContainer: {padding: 10, flexDirection: "row"},
   profileCircle: {
     height: 40,
     width: 40,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 0.5,
     borderColor: colors.somon,
   },

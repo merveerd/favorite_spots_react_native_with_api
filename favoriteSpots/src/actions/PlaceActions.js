@@ -70,7 +70,6 @@ const respondAddPersonalPlace = (response, status, dispatch) => {
 
     const newImage =
       response.data.places[response.data.places.length - 1].image;
-    console.log("newImage.slice(0, 11)", newImage.slice(0, 11));
     if (newImage.slice(0, 11) !== "https://fir") {
       //if it is not already recorded in firebase. there can be another structure without controlling string
       const reference = storage().ref(
@@ -78,12 +77,11 @@ const respondAddPersonalPlace = (response, status, dispatch) => {
           response.data.places[response.data.places.length - 1]._id
         }`,
       );
-      console.log("ref", reference);
+
       reference
         .putFile(newImage)
         .then(() => {
           reference.getDownloadURL().then((imageURL) => {
-            console.log("then");
             response.data.places[
               response.data.places.length - 1
             ].image = imageURL;
