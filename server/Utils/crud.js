@@ -11,17 +11,16 @@ const getOne = (model) => async (req, res) => {
 };
 
 const getManyById = (model) => async (req, res) => {
+  //returns all the documents with given id's.
   try {
-    const searchIds = req.body.searchIds;
+    console.log('getmanyById', req.body);
+    const searchIds = req.body;
     let objectIds = searchIds.map((id) => mongoose.Types.ObjectId(id));
-    console.log('objectIds', objectIds);
-
     const docs = await model.find({
       _id: {
         $in: objectIds,
       },
     });
-    console.log('relational array', docs);
     res.status(200).json(docs);
   } catch (err) {
     res.status(404).json({ message: err });
@@ -30,23 +29,20 @@ const getManyById = (model) => async (req, res) => {
 
 const getMany = (model) => async (req, res) => {
   try {
-    console.log('req');
     const docs = await model.find();
-    console.log('docs', docs);
+
     res.status(200).json(docs);
   } catch (err) {
     let x = { message: err };
-    console.log(x.message);
+
     res.status(404).json({ message: err });
   }
 };
 
 const createOne = (model) => async (req, res) => {
   try {
-    console.log('post', req.body);
     const doc = await model.create(req.body);
     res.status(200).json(doc);
-    console.log('posted');
   } catch (err) {
     console.log('CANT POSTED', err);
     res.status(404).json({ message: err });
@@ -55,7 +51,6 @@ const createOne = (model) => async (req, res) => {
 
 const updateOne = (model) => async (req, res) => {
   try {
-    console.log('patch', req.body);
     let keys = Object.keys(req.body), //check this if it right
       updateObject = {};
     keys.forEach((item) => {
@@ -67,7 +62,7 @@ const updateOne = (model) => async (req, res) => {
       { $set: updateObject },
       { new: true }
     );
-    console.log('doc', doc);
+
     res.status(200).json(doc);
   } catch (err) {
     console.log('patch', err);
@@ -84,7 +79,6 @@ const updateSubDoc = (model) => async (req, res) => {
     doc[updatedArray].push(req.body.data);
     doc.save((err, obj) => {
       if (err) res.send('updateSubDoc err', err);
-      console.log('obj', obj);
       res.json({ obj });
     });
   } catch (err) {

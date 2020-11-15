@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+//mongoose.set('useCreateIndex', true);
 const { isEmail } = require('validator');
 const PlacesSchema = require('./places.model');
 const bcrypt = require('bcrypt');
@@ -17,12 +18,16 @@ const userSchema = new mongoose.Schema({
     minlength: [6, 'Minimum password length is 6 characters'],
   },
   name: { type: String, required: true },
-  username: { type: String, required: true },
+  username: {
+    type: String,
+    required: true,
+    text: true,
+    index: true,
+  },
   image: { type: String, required: false },
-  friendgroups: { type: Array, required: false, default: [] },
   places: [PlacesSchema],
 });
-
+userSchema.index({ username: 'text' });
 // fire a function before doc saved to db
 userSchema.pre('save', async function (next) {
   const salt = await bcrypt.genSalt();

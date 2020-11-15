@@ -12,4 +12,6 @@ router
   .patch(controllers.updateOne)
   .post(controllers.updateSubDoc)
   .delete(controllers.removeOne);
+
+router.route('/').post(controllers.getBySearchText);
 module.exports = router;

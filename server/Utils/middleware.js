@@ -29,8 +29,6 @@ const handleErrors = (err) => {
   else if (err.message.includes('user validation failed')) {
     // console.log(err);
     Object.values(err.errors).forEach(({ properties }) => {
-      // console.log(val);
-      console.log('properties', properties);
       errors[properties.path] = properties.message;
     });
   } else {
@@ -43,9 +41,7 @@ const handleErrors = (err) => {
 const verifyToken = async (token) => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
-      console.log('verify token', err, payload);
       if (err) return reject(err);
-      console.log('without sending payload', payload.id);
       resolve(payload.id);
     });
   });
@@ -131,7 +127,6 @@ const protect = async (req, res, next) => {
     //   .lean() //converting into json data from mongoose
     //   .exec(); // Will execute returning a promise
     // req.user = user; //we removed the password and execution will be continued for routes actions
-    console.log('user protect', user);
     res.status(200).json({ user });
 
     //  next();

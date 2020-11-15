@@ -12,16 +12,8 @@ const PlacesSchema = new mongoose.Schema({
     },
   },
   placeName: { type: String, required: false },
+  //originId
 });
 
-// //As favouriteFoods is a simple array of strings, you can just query that field directly:
-
-// PersonModel.find({ favouriteFoods: "sushi" }, ...);
-
-// model:
-// person = {
-//     name : String,
-//     favoriteFoods : Array
-// }
 module.exports = PlacesSchema;
 // module.exports = mongoose.model('Places', PlacesSchema);

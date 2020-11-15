@@ -13,5 +13,6 @@ router
   .delete(controllers.removeOne);
 
 router.route('/manyById').get(controllers.getManyById);
+router.route('/byUserId/:userid').get(controllers.getContains);
 
 module.exports = router;

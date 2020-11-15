@@ -8,7 +8,7 @@ const MessagesSchema = new mongoose.Schema({
       email: { type: String, required: true },
       image: { type: Number, required: true },
       name: { type: Number, required: true },
-      uid: { type: Number, required: true },
+      id: { type: Number, required: true },
       username: { type: Number, required: true },
     },
   },
