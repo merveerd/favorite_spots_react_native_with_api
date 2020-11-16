@@ -18,7 +18,6 @@ import Menu from "./screens/Menu/Menu";
 import AddLocation from "./screens/Maps/AddLocation";
 
 import Home from "./screens/Home/Home";
-import HomeDetails from "./screens/Home/HomeDetails";
 
 import Profile from "./screens/Profile/Profile";
 
@@ -143,8 +142,20 @@ const HomeStackScreen = () => {
           },
         })}
       />
-      <HomeStack.Screen name="PlaceDetails" component={PlaceDetails} />
-      <HomeStack.Screen name="HomeDetails" component={HomeDetails} />
+      <HomeStack.Screen
+        name="MyFavoriteList"
+        component={MyFavoriteList}
+        options={({navigation, route}) => ({
+          headerShown: false,
+        })}></HomeStack.Screen>
+
+      <HomeStack.Screen
+        name="PlaceDetails"
+        component={PlaceDetails}
+        options={({navigation, route}) => ({
+          headerShown: false,
+        })}
+      />
     </HomeStack.Navigator>
   );
 };
@@ -164,29 +175,6 @@ const ProfileStackScreen = () => {
   );
 };
 
-const MyFavoriteListStack = createStackNavigator();
-const MyFavoriteListStackScreen = () => {
-  return (
-    <MyFavoriteListStack.Navigator>
-      <MyFavoriteListStack.Screen
-        name="MyFavoriteList"
-        component={MyFavoriteList}
-      />
-      <MyFavoriteListStack.Screen
-        name="PlaceDetails"
-        component={PlaceDetails}
-      />
-    </MyFavoriteListStack.Navigator>
-  );
-};
-const PlaceDetailsStack = createStackNavigator();
-const PlaceDetailsStackScreen = () => {
-  return (
-    <PlaceDetailsStack.Navigator>
-      <PlaceDetailsStack.Screen name="PlaceDetails" component={PlaceDetails} />
-    </PlaceDetailsStack.Navigator>
-  );
-};
 const PlaceListStack = createStackNavigator();
 const PlaceListStackScreen = () => {
   return (
@@ -293,7 +281,13 @@ const TabStackScreen = () => {
         component={HomeStackScreen}
       />
       <TabStack.Screen name="Add Location" component={AddLocationStackScreen} />
-      <TabStack.Screen name="PlaceList" component={PlaceListStackScreen} />
+      <TabStack.Screen
+        name="PlaceList"
+        component={PlaceListStackScreen}
+        options={({navigation, route}) => ({
+          headerShown: false,
+        })}
+      />
       <TabStack.Screen name="Search" component={SearchStackScreen} />
       {/* 
             <TabStack.Screen name="Notifications" component={NotificationsStackScreen} />
@@ -369,18 +363,6 @@ function Router(props) {
             <RootStack.Screen
               name="UserDetails"
               component={UserDetailsStackScreen}
-            />
-            <RootStack.Screen
-              name="MyFavoriteList"
-              component={MyFavoriteListStackScreen}
-              options={{
-                animationEnabled: false,
-              }}
-            />
-            <RootStack.Screen name="Home" component={HomeStackScreen} />
-            <RootStack.Screen
-              name="PlaceDetails"
-              component={PlaceDetailsStackScreen}
             />
             <RootStack.Screen
               name="Settings"

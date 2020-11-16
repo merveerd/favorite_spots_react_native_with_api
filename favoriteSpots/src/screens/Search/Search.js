@@ -53,7 +53,9 @@ const Search = (props) => {
           />
         </Item>
         <FlatList
-          data={props.users.slice(0, 7)}
+          data={props.users
+            .slice(0, 7)
+            .filter((user) => user._id !== props.user._id)}
           renderItem={renderItem}
           keyExtractor={(item, index) => `${index}`}></FlatList>
       </View>

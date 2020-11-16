@@ -72,6 +72,11 @@ const respondAddPersonalPlace = (response, status, dispatch) => {
       response.data.places[response.data.places.length - 1].image;
     if (newImage.slice(0, 11) !== "https://fir") {
       //if it is not already recorded in firebase. there can be another structure without controlling string
+      console.log(
+        `/users/${response.data._id}/places/${
+          response.data.places[response.data.places.length - 1]._id
+        }`,
+      );
       const reference = storage().ref(
         `/users/${response.data._id}/places/${
           response.data.places[response.data.places.length - 1]._id

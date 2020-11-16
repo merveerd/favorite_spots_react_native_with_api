@@ -48,6 +48,7 @@ class AddLocation extends Component {
 
   componentDidMount() {
     this.requestLocationPermission();
+    console.log("add loc", this.state.markers);
   }
 
   onMapReady = () => {
@@ -55,6 +56,7 @@ class AddLocation extends Component {
   };
 
   selectImage() {
+    console.log("select");
     const options = {
       title: "Profil Fotoğrafı Seçiniz",
       quality: 0.2,
@@ -177,22 +179,20 @@ class AddLocation extends Component {
   };
 
   onMarkerPressed = (location, index) => {
+    // this.setState(
+    //   {
+    //     region,
+    //     regionChangeProgress: true,
+    //   },
+    //   () => this.fetchAddress(),
+    // );
     this._map.animateToRegion({
       latitude: location.latitude,
       longitude: location.longitude,
       latitudeDelta: 0.09,
       longitudeDelta: 0.035,
     });
-
-    // this._carousel.snapToItem(index);
   };
-
-  renderCarouselItem = ({item}) => (
-    <View style={styles.cardContainer}>
-      <Text style={styles.cardTitle}>{item.name}</Text>
-      <Image style={styles.cardImage} source={item.image} />
-    </View>
-  );
 
   render() {
     if (this.state.loading) {
@@ -228,17 +228,19 @@ class AddLocation extends Component {
                     longitude: this.state.selectedLocation.longitude,
                   }}>
                   <Callout onPress={this.showWelcomeMessage}>
-                    <Text>is it an interesting place?</Text>
+                    <Text>
+                      Is it an interesting place? Let's save for the records
+                    </Text>
                   </Callout>
                 </Marker>
               ) : (
                 []
               )}
-              {this.props.myPlaces.map((place, index) => (
+              {this.props.user.places.map((place, index) => (
                 <Marker
                   key={place.desc}
                   ref={(ref) => (this.state.markers[index] = ref)}
-                  //   onPress={() => this.onMarkerPressed(place, index)}
+                  onPress={() => this.onMarkerPressed(place, index)}
                   pinColor={colors.blue}
                   coordinate={{
                     latitude: place.location.latitude,
@@ -341,19 +343,6 @@ class AddLocation extends Component {
               }}></Button>
           </View>
         )}
-
-        {/* <Carousel
-          ref={(c) => {
-            this._carousel = c;
-          }}
-          data={this.state.coordinates}
-          containerCustomStyle={styles.carousel}
-          renderItem={this.renderCarouselItem}
-          sliderWidth={Dimensions.get('window').width}
-          itemWidth={300}
-          removeClippedSubviews={false}
-          onSnapToItem={(index) => this.onCarouselItemChange(index)}
-        /> */}
       </SafeAreaView>
     );
   }
