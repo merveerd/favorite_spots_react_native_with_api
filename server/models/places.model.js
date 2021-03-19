@@ -1,19 +1,18 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const PlacesSchema = new mongoose.Schema({
-  createdDate: { type: Date, required: true, default: Date.now },
-  desc: { type: String, required: false },
-  image: { type: String, required: false }, //can be array for later
+  ////conditional date? createdDate: { type: Date, required: true, default: Date.now },
+  //to track popularity, count can be added
   location: {
     type: {
-      address: { type: String, required: true },
-      latitude: { type: Number, required: true },
-      longitude: { type: Number, required: true },
+      type: { type: String, required: false, default: "Point" },
+      coordinates: [Number, Number],
     },
+    address: { type: String, required: true },
   },
-  placeName: { type: String, required: false },
-  //originId
+  placeName: { type: String, required: false }, //Original name of the place if it has any
+
+  _id: { type: String, required: true },
 });
 
-module.exports = PlacesSchema;
-// module.exports = mongoose.model('Places', PlacesSchema);
+module.exports = mongoose.model("Places", PlacesSchema);

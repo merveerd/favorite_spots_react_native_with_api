@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const getOne = (model) => async (req, res) => {
   const id = req.params.id;
 
@@ -13,7 +13,7 @@ const getOne = (model) => async (req, res) => {
 const getManyById = (model) => async (req, res) => {
   //returns all the documents with given id's.
   try {
-    console.log('getmanyById', req.body);
+    console.log("getmanyById", req.body);
     const searchIds = req.body;
     let objectIds = searchIds.map((id) => mongoose.Types.ObjectId(id));
     const docs = await model.find({
@@ -44,14 +44,14 @@ const createOne = (model) => async (req, res) => {
     const doc = await model.create(req.body);
     res.status(200).json(doc);
   } catch (err) {
-    console.log('CANT POSTED', err);
+    console.log("CANT POSTED", err);
     res.status(404).json({ message: err });
   }
 };
 
 const updateOne = (model) => async (req, res) => {
   try {
-    let keys = Object.keys(req.body), //check this if it right
+    let keys = Object.keys(req.body),
       updateObject = {};
     keys.forEach((item) => {
       updateObject[item] = req.body[item];
@@ -60,12 +60,12 @@ const updateOne = (model) => async (req, res) => {
       //check if name conflict will be there
       { _id: req.params.id },
       { $set: updateObject },
-      { new: true }
+      { upsert: true, new: true, setDefaultsOnInsert: true }
     );
 
     res.status(200).json(doc);
   } catch (err) {
-    console.log('patch', err);
+    console.log("patch", err);
     res.status(404).json({ message: err });
   }
 };
@@ -78,7 +78,7 @@ const updateSubDoc = (model) => async (req, res) => {
 
     doc[updatedArray].push(req.body.data);
     doc.save((err, obj) => {
-      if (err) res.send('updateSubDoc err', err);
+      if (err) res.send("updateSubDoc err", err);
       res.json({ obj });
     });
   } catch (err) {

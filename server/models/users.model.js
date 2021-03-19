@@ -1,21 +1,20 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 //mongoose.set('useCreateIndex', true);
-const { isEmail } = require('validator');
-const PlacesSchema = require('./places.model');
-const bcrypt = require('bcrypt');
+const { isEmail } = require("validator");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: [true, 'Please enter an email'],
+    required: [true, "Please enter an email"],
     unique: true, //we cant give error message
     lowercase: true,
-    validate: [isEmail, 'Please enter a valid email'],
+    validate: [isEmail, "Please enter a valid email"],
   },
   password: {
     type: String,
-    required: [true, 'Please enter a password'],
-    minlength: [6, 'Minimum password length is 6 characters'],
+    required: [true, "Please enter a password"],
+    minlength: [6, "Minimum password length is 6 characters"],
   },
   name: { type: String, required: true },
   username: {
@@ -25,11 +24,19 @@ const userSchema = new mongoose.Schema({
     index: true,
   },
   image: { type: String, required: false },
-  places: [PlacesSchema],
+  places: [
+    {
+      _id: { type: String },
+      description: { type: String },
+      photos: [String],
+      createdDate: { type: Date, default: Date.now },
+    },
+  ],
+  createdDate: { type: Date, default: Date.now },
 });
-userSchema.index({ username: 'text' });
+userSchema.index({ username: "text" });
 // fire a function before doc saved to db
-userSchema.pre('save', async function (next) {
+userSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt();
   this.password = await bcrypt.hash(this.password, salt); //'this' here refers user instance as we didnt use arrow function
   next();
@@ -49,6 +56,6 @@ userSchema.pre('save', async function (next) {
 //   throw Error('incorrect email');
 // };
 
-const User = mongoose.model('user', userSchema);
+const User = mongoose.model("user", userSchema);
 
 module.exports = User;
