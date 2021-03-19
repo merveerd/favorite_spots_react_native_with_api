@@ -1,7 +1,7 @@
 import storage from "@react-native-firebase/storage";
 import AsyncStorage from "@react-native-community/async-storage";
 import * as Keychain from "react-native-keychain";
-
+const axios = require("axios");
 import {
   LOGIN_START,
   LOGIN_SUCCESS,
@@ -10,7 +10,7 @@ import {
   UPDATE_USER_START,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_FAILED,
-  RESET_USERS,
+  // RESET_USERS,
   RESET_PLACES,
   RESET_FRIEND_GROUPS,
   BASE_URL,
@@ -19,7 +19,7 @@ import {
 } from "./types";
 
 import {Alert} from "react-native";
-import {post, get, patch} from "./APIService";
+import {post, get, patch} from "../helpers/APIService";
 
 const respondLoginAction = async (response, status, dispatch) => {
   if (status) {
@@ -70,7 +70,25 @@ export const login = (params) => {
           type: LOGIN_START,
         });
 
-        post(BASE_URL.concat("/signin"), respondLoginAction, dispatch, params);
+        //    post(BASE_URL.concat("/signin"), respondLoginAction, dispatch, params);
+        axios
+          .request({
+            method: "POST",
+            url: BASE_URL.concat("/signin"),
+            responseType: "json",
+            data: params,
+          })
+          .then((response) => {
+            if (response.status < 400) {
+              respondLoginAction(response, true, dispatch);
+            } else {
+              respondLoginAction(response, false, dispatch);
+            }
+          })
+          .catch((e) => {
+            console.log("err post", BASE_URL.concat("/signin"), e.message);
+            respondLoginAction(e, false, dispatch);
+          });
       } else {
         Alert.alert("WARNING", "Please enter a valid email address");
       }
@@ -126,7 +144,7 @@ const getUser = (response, status, dispatch) => {
   if (status) {
     dispatch({type: LOGIN_SUCCESS, payload: response.data.user});
   } else {
-    console.log("Read Data error get User: ", response);
+    // console.log("Read Data error get User: ", response);
     dispatch({type: LOGIN_FAILED});
   }
 };
@@ -145,7 +163,7 @@ export const signOut = () => {
     USER.token = null;
 
     dispatch({type: SIGN_OUT_SUCCESS});
-    dispatch({type: RESET_USERS});
+    // dispatch({type: RESET_USERS});
     dispatch({type: RESET_PLACES});
     dispatch({type: RESET_FRIEND_GROUPS});
 

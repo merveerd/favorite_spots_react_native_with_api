@@ -1,4 +1,6 @@
+const axios = require("axios");
 import React, {Component} from "react";
+import {connect} from "react-redux";
 import {
   StyleSheet,
   View,
@@ -6,57 +8,87 @@ import {
   Image,
   Alert,
   Platform,
-  Dimensions,
   SafeAreaView,
   StatusBar,
-  Modal,
+  Dimensions,
+  TouchableOpacity,
 } from "react-native";
 import MapView, {PROVIDER_GOOGLE, Marker, Callout} from "react-native-maps";
 import {request, PERMISSIONS} from "react-native-permissions";
 import Geolocation from "@react-native-community/geolocation";
 //import Carousel from 'react-native-snap-carousel';
-import Icon from "react-native-vector-icons/FontAwesome5";
 import ImagePicker from "react-native-image-picker";
-import {connect} from "react-redux";
-import {colors, fonts} from "../../style";
-import {addPersonalPlace} from "../../actions";
-import {Button} from "../../components";
 import {TextInput} from "react-native-gesture-handler";
-
+import {addPlace} from "../../actions";
+import {fonts, colors} from "../../style";
+import {Button, SearchBar, SearchList} from "../../components";
+//callout text can be varied, randomly shown. Do yo like this place, let's make it memorable.
 class AddLocation extends Component {
-  static navigationOptions = {
-    title: "San Francisco",
-  };
+  constructor(props) {
+    super(props);
 
-  state = {
-    image: null,
-    desc: null,
-    markers: [],
-    isMapReady: false,
-    shownFavorites: false,
-    selectedLocation: "",
-    imageSelected: false,
+    this.state = {
+      image: null,
+      desc: null,
+      markers: [],
+      isMapReady: false,
+      isPressEnabled: false,
+      shownFavorites: false,
+      selectedLocation: {
+        longitude: 0,
+        latitude: 0,
+        latitudeDelta: 0.001,
+        longitudeDelta: 0.001,
+      },
+      selectedAdress: "",
+      placeId: "",
+      placeName: "",
+      imageSelected: false,
+      searchKeyword: "",
+      searchResults: [],
+      isShowingResults: true,
 
-    region: {
-      latitude: 10,
-      longitude: 10,
-      latitudeDelta: 0.001,
-      longitudeDelta: 0.001,
-    },
-    regionChangeProgress: false,
-  };
-
-  componentDidMount() {
-    this.requestLocationPermission();
-    console.log("add loc", this.state.markers);
+      region: {
+        latitude: 10,
+        longitude: 10,
+        latitudeDelta: 0.001,
+        longitudeDelta: 0.001,
+      },
+      regionChangeProgress: false,
+    };
+    this.selectionTapRef = React.createRef();
   }
 
+  componentDidMount() {
+    this.selectionTapRef.current.addEventListener("mouseenter", () => {
+      console.log("Regular Mouse Enter Event");
+    });
+  }
+  componentDidMount() {
+    this.requestLocationPermission();
+  }
+
+  handleMapPress = (e) => {
+    this.setState(
+      {
+        selectedLocation: {
+          latitude: e.nativeEvent.coordinate.latitude,
+          longitude: e.nativeEvent.coordinate.longitude,
+          longitudeDelta: 0.003,
+          latitudeDelta: 0.003,
+        },
+      },
+      () => {
+        console.log("press");
+        this.getPressedLocation(); //to make sure state changes have been recognized
+      },
+    );
+  };
   onMapReady = () => {
     this.setState({isMapReady: true});
   };
 
   selectImage() {
-    console.log("select");
     const options = {
       title: "Profil Fotoğrafı Seçiniz",
       quality: 0.2,
@@ -84,33 +116,45 @@ class AddLocation extends Component {
     });
   }
 
-  showWelcomeMessage = () =>
-    Alert.alert("Welcome to San Francisco", "The food is amazing", [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-      {
-        text: "Ok",
-      },
-    ]);
-
   requestLocationPermission = async () => {
     if (Platform.OS === "ios") {
       var response = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-      //   console.log("iPhone: " + response);
 
       if (response === "granted") {
         this.locateCurrentPosition();
       }
     } else {
       var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-      // console.log("Android: " + response);
 
       if (response === "granted") {
         this.locateCurrentPosition();
       }
     }
+  };
+
+  searchLocation = async (text) => {
+    if (text.length >= 3) {
+      axios
+        .request({
+          method: "post",
+
+          url: `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyDETQ1fCUl8u3oXaIhQEL0roq7HDeRaddQ&input=${text}`,
+        })
+        .then((response) => {
+          this.setState({
+            searchResults: response.data.predictions,
+            //isShowingResults: true,
+          });
+        })
+        .catch((e) => {
+          console.log(e.response);
+        });
+      return;
+    }
+    this.setState({
+      searchResults: [],
+      //isShowingResults: true,
+    });
   };
 
   locateCurrentPosition = () => {
@@ -123,75 +167,79 @@ class AddLocation extends Component {
           longitudeDelta: 0.035,
         };
 
-        this.setState({initialPosition});
+        this.setState({region: initialPosition});
       },
       (error) => Alert.alert(error.message),
       {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000},
     );
   };
 
-  onCarouselItemChange = (index) => {
-    let location = this.state.coordinates[index];
-
-    this._map.animateToRegion({
-      latitude: location.latitude,
-      longitude: location.longitude,
-      latitudeDelta: 0.09,
-      longitudeDelta: 0.035,
-    });
-
-    this.state.markers[index].showCallout();
-  };
   // Fetch location details as a JOSN from google map API
-  fetchAddress = () => {
+  getPressedLocation = () => {
+    this.setState({placeName: ""});
+    //only for no-name places
     fetch(
       "https://maps.googleapis.com/maps/api/geocode/json?address=" +
-        this.state.region.latitude +
+        this.state.selectedLocation.latitude +
         "," +
-        this.state.region.longitude +
+        this.state.selectedLocation.longitude +
         "&key=" +
         "AIzaSyDETQ1fCUl8u3oXaIhQEL0roq7HDeRaddQ",
     )
       .then((response) => response.json())
       .then((responseJson) => {
-        const selectedAdress = responseJson.results[0].formatted_address;
-
+        console.log("responseJson", responseJson);
         this.setState({
           selectedLocation: {
-            adress: selectedAdress,
+            ...this.state.selectedLocation,
             latitude: responseJson.results[0].geometry.location.lat,
             longitude: responseJson.results[0].geometry.location.lng,
           },
-          regionChangeProgress: false,
+          selectedAdress: responseJson.results[0].formatted_address,
         });
       });
   };
 
   // Update state on region change
-  onRegionChange = (region) => {
-    this.setState(
-      {
-        region,
-        regionChangeProgress: true,
-      },
-      () => this.fetchAddress(),
-    );
+  createMarker = (region) => {
+    this.setState({
+      region,
+      regionChangeProgress: true,
+    });
   };
 
-  onMarkerPressed = (location, index) => {
-    // this.setState(
-    //   {
-    //     region,
-    //     regionChangeProgress: true,
-    //   },
-    //   () => this.fetchAddress(),
-    // );
-    this._map.animateToRegion({
-      latitude: location.latitude,
-      longitude: location.longitude,
-      latitudeDelta: 0.09,
-      longitudeDelta: 0.035,
+  getSelectedLocation = (item) => {
+    fetch(
+      `https://maps.googleapis.com/maps/api/place/details/json?input=bar&placeid=${item.place_id}&key=AIzaSyDETQ1fCUl8u3oXaIhQEL0roq7HDeRaddQ`,
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          selectedLocation: {
+            latitude: responseJson.result.geometry.location.lat,
+            longitude: responseJson.result.geometry.location.lng,
+            longitudeDelta: 0.003,
+            latitudeDelta: 0.003,
+          },
+          regionChangeProgress: false,
+          selectedAdress: responseJson.result.formatted_address,
+          placeName: responseJson.result.name,
+          placeId: responseJson.result.place_id,
+        });
+
+        this.createMarker(this.state.selectedLocation);
+      });
+
+    this.setState({
+      searchResults: [],
+      searchKeyword: "",
+      //isShowingResults: true,
     });
+  };
+
+  openTapSelectionWarning = () => {
+    console.log("openTapSelectionWarning for anonymous adresses");
+    alert("Please select");
   };
 
   render() {
@@ -206,6 +254,23 @@ class AddLocation extends Component {
       <SafeAreaView style={{flex: 1}}>
         {!this.state.image ? (
           <View style={{flex: 1}}>
+            <SearchBar
+              placeholder="search for a place"
+              onChangeText={(text) => {
+                this.setState({searchKeyword: text});
+                this.searchLocation(text);
+              }}
+              value={this.state.searchKeyword}
+            />
+            {this.state.searchResults.length > 0 ? (
+              <SearchList
+                searchResults={this.state.searchResults}
+                onPress={this.getSelectedLocation}
+                text="description"
+              />
+            ) : (
+              []
+            )}
             <MapView
               provider={PROVIDER_GOOGLE}
               draggable
@@ -217,17 +282,20 @@ class AddLocation extends Component {
                 height: "100%",
                 justifyContent: "flex-end",
               }}
-              initialRegion={this.state.initialPosition}
+              // initialRegion={this.state.region}
               onMapReady={this.onMapReady}
-              onRegionChangeComplete={this.onRegionChange}>
-              {this.state.selectedLocation ? (
+              onPress={(e) =>
+                this.state.isPressEnabled && this.handleMapPress(e)
+              }
+              region={this.state.region}>
+              {this.state.selectedLocation.latitude ? (
                 <Marker
                   draggable
                   coordinate={{
                     latitude: this.state.selectedLocation.latitude,
                     longitude: this.state.selectedLocation.longitude,
                   }}>
-                  <Callout onPress={this.showWelcomeMessage}>
+                  <Callout>
                     <Text>
                       Is it an interesting place? Let's save for the records
                     </Text>
@@ -236,21 +304,21 @@ class AddLocation extends Component {
               ) : (
                 []
               )}
-              {this.props.user.places.map((place, index) => (
-                <Marker
-                  key={place.desc}
-                  ref={(ref) => (this.state.markers[index] = ref)}
-                  onPress={() => this.onMarkerPressed(place, index)}
-                  pinColor={colors.blue}
-                  coordinate={{
-                    latitude: place.location.latitude,
-                    longitude: place.location.longitude,
-                  }}>
-                  <Callout>
-                    <Text>{place.desc}</Text>
-                  </Callout>
-                </Marker>
-              ))}
+              {/* {this.props.user.places.map((place, index) => (
+                // <Marker
+                //   key={place.desc}
+                //   ref={(ref) => (this.state.markers[index] = ref)}
+                //   onPress={() => this.onMarkerPressed(place, index)}
+                //   pinColor={colors.blue}
+                //   coordinate={{
+                //     latitude: place.location.latitude,
+                //     longitude: place.location.longitude,
+                //   }}>
+                //   <Callout>
+                //     <Text>{place.desc}</Text>
+                //   </Callout>
+                // </Marker>
+              ))} */}
             </MapView>
             <View style={styles.detailSection}>
               <Text
@@ -259,24 +327,33 @@ class AddLocation extends Component {
                   fontWeight: "bold",
                   fontFamily: "roboto",
                 }}>
-                Move map for location
+                {this.state.placeName}
+                {this.state.selectedAdress}
               </Text>
-              <Text style={{fontSize: 10, color: "#999"}}>LOCATION</Text>
-              <Text
-                numberOfLines={2}
+              <TouchableOpacity
                 style={{
-                  fontSize: 14,
-                  paddingVertical: 10,
-                  borderBottomColor: "silver",
-                  borderBottomWidth: 0.5,
-                }}>
-                {!this.state.regionChangeProgress
-                  ? this.state.selectedLocation.adress
-                  : "Identifying Location..."}
-              </Text>
+                  backgroundColor: colors.purple,
+                  borderRadius:
+                    Math.round(
+                      Dimensions.get("window").width +
+                        Dimensions.get("window").height,
+                    ) / 2,
+                  width: Dimensions.get("window").width * 0.1,
+                  height: Dimensions.get("window").width * 0.1,
+                }}
+                ref={this.ref}
+                text={"tap selection"}
+                onMouseOver={() => {
+                  this.openTapSelectionWarning();
+                }}
+                onPress={() => {
+                  this.setState((prevState) => ({
+                    isPressEnabled: !prevState.isPressEnabled,
+                  }));
+                }}></TouchableOpacity>
               <Button
                 style={styles.customButtonSelect}
-                text={"Select Image for this place"}
+                text={"Save the place"}
                 disabled={this.state.regionChangeProgress}
                 onPress={() => {
                   this.selectImage();
@@ -321,23 +398,34 @@ class AddLocation extends Component {
               onPress={() => {
                 const params = {
                   place: {
-                    placeName: null, //there should be original name if there is any, to keep track how many people liked it
+                    _id: this.state.placeId,
+                    placeName: this.state.placeName, //there should be original name if there is any, to keep track how many people liked it
+                    location: {
+                      type: "Point",
+                      coordinates: [
+                        this.state.selectedLocation.longitude,
+                        this.state.selectedLocation.latitude,
+                      ],
+                      address: this.state.selectedAdress,
+                    },
+                  },
+                  user: this.props.user,
+                  personalPlaceInfo: {
                     desc: this.state.desc,
                     image: this.state.image,
                     createdDate: new Date(),
-                    location: this.state.selectedLocation,
                   },
-                  user: this.props.user,
                 };
-                console.log("add location", params);
+
                 //comment could be available when it is open to friendList/friendGroup friend degilken sadece kac tane favori place I var  onu gorebiliyosun.
                 if (this.state.desc) {
-                  this.props.addPersonalPlace(params);
+                  this.props.addPlace(params);
                   this.setState({image: null});
+                  this.locateCurrentPosition();
                 } else {
                   Alert.alert(
-                    "Hey",
-                    "please enter how you want to remember this place",
+                    "Hi",
+                    "please enter a few words for how you want to remember this place",
                   );
                 }
               }}></Button>
@@ -356,31 +444,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
 
-  carousel: {
-    position: "absolute",
-    bottom: 0,
-    marginBottom: 48,
-  },
-  cardContainer: {
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    height: 200,
-    width: 300,
-    padding: 24,
-    borderRadius: 24,
-  },
-  cardImage: {
-    height: 120,
-    width: 300,
-    bottom: 0,
-    position: "absolute",
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-  },
-  cardTitle: {
-    color: "white",
-    fontSize: 22,
-    alignSelf: "center",
-  },
   customButtonAdd: {
     color: "white",
     alignSelf: "center",
@@ -400,9 +463,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
 
-  btnContainer: {
-    width: "50%",
-    height: "100%",
+  item: {
+    padding: 10,
+    marginHorizontal: 16,
   },
 });
 
@@ -412,4 +475,4 @@ const mapStateToProps = ({placeResponse, authResponse}) => {
   return {myPlaces, user};
 };
 
-export default connect(mapStateToProps, {addPersonalPlace})(AddLocation);
+export default connect(mapStateToProps, {addPlace})(AddLocation);

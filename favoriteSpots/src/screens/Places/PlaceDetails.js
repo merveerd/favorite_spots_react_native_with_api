@@ -66,7 +66,7 @@ const PlaceDetails = (props) => {
             setDisabled(true);
 
             props.addGroupPlace({
-              place: placeInfo,
+              place: placeInfo, //will be added comments [], desc optional, images []
               friendGroup: item,
             });
           }}></Button>

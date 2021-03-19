@@ -30,7 +30,7 @@ const friendgroupsRoute = require("./routes/friendGroups.router");
 app.use("/friendgroups", friendgroupsRoute);
 
 //Connect To Db
-const mongodb_uri = `mongodb+srv://merve_erdogmus:${27572757}@cluster0.4aoqe.mongodb.net/favoriteSpots?retryWrites=true&w=majority`;
+const mongodb_uri = `mongodb+srv://merve_erdogmus:${""}@cluster0.4aoqe.mongodb.net/favoriteSpots?retryWrites=true&w=majority`;
 mongoose.connect(
   mongodb_uri,
   {

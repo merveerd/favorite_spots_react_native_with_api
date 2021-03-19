@@ -6,7 +6,8 @@ import {connect} from "react-redux";
 import * as RootNavigation from "../../RootNavigation.js";
 const Place = (props) => {
   //icon section will be added when friendGroup places available
-  const {image, placeName, desc, createdDate} = props.data;
+
+  const {photos, placeName, description, createdDate} = props.data;
 
   // const [groupNames, setGroupNames] = useState([]);
 
@@ -40,21 +41,24 @@ const Place = (props) => {
       <View style={{flex: 9, marginLeft: 10}}>
         {/* <Text style={{fontSize: 14, fontWeight: 'bold'}}>{placeName}</Text> */}
 
-        <Text style={{fontSize: fonts.small, marginTop: 5}}>{desc}</Text>
-        {props.data.friendGroups ? (
+        <Text style={{fontSize: fonts.small, marginTop: 5}}>{description}</Text>
+        {/* {props.data.friendGroups ? (
           <View style={{flexDirection: "row"}}>
             <SharedFriendGroups />
           </View>
         ) : (
           []
-        )}
-        {image && (
+        )} */}
+        {photos && (
           <View>
             <Image
-              source={{uri: image}}
+              source={{uri: photos[0]}}
               style={{width: "100%", height: 150}}
               resizeMode="cover"
             />
+            {/* <Text style={{fontSize: fonts.small, marginTop: 5}}>
+              {placeName}
+            </Text> */}
           </View>
         )}
 

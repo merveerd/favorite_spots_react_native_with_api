@@ -1,12 +1,5 @@
-import React, {useState, useEffect} from "react";
-import {
-  View,
-  Text,
-  SafeAreaView,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import React from "react";
+import {View, Text, TouchableOpacity, StyleSheet} from "react-native";
 import {BackButton} from "./BackButton";
 import {fonts, colors, appName} from "../style";
 import {Icon} from "native-base";

@@ -6,6 +6,9 @@ import {
   UPDATE_USER_START,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_FAILED,
+  REMOVE_USER_START,
+  REMOVE_USER_SUCCESS,
+  REMOVE_USER_FAILED,
 } from "../actions/types";
 
 const INITIAL_STATE = {
@@ -55,6 +58,28 @@ export default (state = INITIAL_STATE, action) => {
         ...state,
         loading: false,
       };
+
+    case REMOVE_USER_START:
+      return {
+        ...state,
+        loadingUser: true, //deleting account
+      };
+
+    case REMOVE_USER_SUCCESS:
+      const id = action.payload;
+      const newData = state.users.filter((dt) => dt.id != id); //should be revised
+      return {
+        ...state,
+        loadingUser: false,
+        users: newData,
+      };
+
+    case REMOVE_USER_FAILED:
+      return {
+        ...state,
+        loadingUser: false,
+      };
+
     default:
       return state;
   }

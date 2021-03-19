@@ -10,7 +10,7 @@ import {
 } from "./types";
 
 import {Alert} from "react-native";
-import {post, get, patch} from "./APIService";
+import {post, get, patch} from "../helpers/APIService";
 import * as RootNavigation from "../RootNavigation";
 
 const respondCreateFriendGroup = (response, status, dispatch) => {

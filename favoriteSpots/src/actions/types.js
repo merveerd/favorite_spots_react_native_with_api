@@ -62,9 +62,7 @@ export const ADD_ROOM_START = "add_room_start";
 export const ADD_ROOM_SUCCESS = "add_room_success";
 export const ADD_ROOM_FAILED = "add_room_failed";
 
-export const RESET_USERS = "reset_users";
 export const RESET_PLACES = "reset_places";
-export const RESET_FRIEND_GROUPS = "reset_friend_groups";
 
 export const USER = {
   token: null,

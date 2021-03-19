@@ -1,7 +1,7 @@
 const axios = require("axios");
 import AsyncStorage from "@react-native-community/async-storage";
 //import * as Keychain from "react-native-keychain";
-import {LOCAL_AUTH_ID} from "./types";
+import {LOCAL_AUTH_ID} from "../actions/types";
 
 export const get = async (
   requestMethod,
@@ -30,8 +30,8 @@ export const get = async (
       }
     })
     .catch((e) => {
-      console.log("err get", requestMethod);
-      console.log(e);
+      //  console.log("err get", requestMethod);
+
       callbackFn(e, false, dispatch);
     });
 };
@@ -41,9 +41,11 @@ export const post = async (
   callbackFn,
   dispatch,
   requestParams,
+  additionalParams,
 ) => {
   // const credentials = await Keychain.getGenericPassword();
   let token1 = await AsyncStorage.getItem(LOCAL_AUTH_ID);
+  console.log("req params before", requestParams);
   return axios
     .request({
       method: "POST",
@@ -55,16 +57,11 @@ export const post = async (
       },
     })
     .then((response) => {
-      //console.log("response post", requestMethod, response);
-      if (response.status < 400) {
-        callbackFn(response, true, dispatch);
-      } else {
-        callbackFn(response, false, dispatch);
-      }
+      return callbackFn(response, dispatch, additionalParams); //retunr new added
     })
     .catch((e) => {
       console.log("err post", requestMethod, e.message);
-      callbackFn(e, false, dispatch);
+      callbackFn(e, dispatch, additionalParams);
     });
 };
 
@@ -87,16 +84,11 @@ export const patch = async (
       },
     })
     .then((response) => {
-      console.log("response patch", requestMethod, response);
-      if (response.status < 400) {
-        callbackFn(response, true, dispatch);
-      } else {
-        callbackFn(response, false, dispatch);
-      }
+      callbackFn(response, dispatch);
     })
     .catch((e) => {
       console.log("err patch", requestMethod, e.message);
-      callbackFn(e, false, dispatch);
+      callbackFn(e, dispatch);
     });
 };
 
@@ -117,12 +109,12 @@ export const deleteOne = async (
     })
     .then((response) => {
       if (response.status < 400) {
-        callbackFn(response, true, dispatch);
+        callbackFn(response, dispatch);
       } else {
-        callbackFn(response, false, dispatch);
+        callbackFn(response, dispatch);
       }
     })
     .catch((e) => {
-      callbackFn(e, false, dispatch);
+      callbackFn(e, dispatch);
     });
 };

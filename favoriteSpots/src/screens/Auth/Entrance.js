@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect} from "react";
 
 import {
   View,
@@ -10,13 +10,13 @@ import {
   StatusBar,
   ActivityIndicator,
   Image,
-} from 'react-native';
+} from "react-native";
 
-import {connect} from 'react-redux';
-import {Icon} from 'native-base';
+import {connect} from "react-redux";
+import {Icon} from "native-base";
 
-import {colors, fonts, appName} from '../../style';
-import {isUser} from '../../actions';
+import {colors, fonts, appName} from "../../style";
+import {isUser} from "../../actions";
 
 const Entrance = (props) => {
   useEffect(() => {
@@ -25,7 +25,7 @@ const Entrance = (props) => {
 
   if (props.loading) {
     return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
         <ActivityIndicator size="large" />
       </View>
     );
@@ -39,19 +39,19 @@ const Entrance = (props) => {
       }}>
       <StatusBar backgroundColor={colors.blue} barStyle="light-content" />
       <View style={styles.logoView}>
-        <Image source={require('../../assets/logo.png')} style={styles.logo} />
+        <Image source={require("../../assets/logo.png")} style={styles.logo} />
       </View>
 
       <View style={styles.bodyView}>
-        <Text style={appName}>HUBSPOTS</Text>
-        <Text style={styles.mainText}>Find your favorite spots!</Text>
+        <Text style={appName}>VIBESPOTS</Text>
+        <Text style={styles.mainText}>Keep your favorite spots in!</Text>
 
         <TouchableOpacity
           onPress={() => {
-            props.navigation.navigate('SignUp');
+            props.navigation.navigate("SignUp");
           }}>
           <Text style={styles.whiteText}>
-            Challenge Accepted!
+            Such a good idea!
             <Text style={styles.blueText}>Create an account</Text>
           </Text>
         </TouchableOpacity>
@@ -61,9 +61,9 @@ const Entrance = (props) => {
         <Text
           style={styles.blueText}
           onPress={() => {
-            props.navigation.navigate('SignIn');
+            props.navigation.navigate("SignIn");
           }}>
-          Come In
+          You In
         </Text>
       </View>
     </SafeAreaView>
@@ -73,8 +73,8 @@ const Entrance = (props) => {
 const styles = StyleSheet.create({
   logoView: {
     flex: 3,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 2,
     borderTopWidth: 0,
 
@@ -84,30 +84,30 @@ const styles = StyleSheet.create({
     backgroundColor: colors.blue,
   },
   logo: {
-    width: '52%',
-    height: '70%',
+    width: "52%",
+    height: "70%",
   },
   bodyView: {
     flex: 3,
-    marginTop: '10%',
-    alignItems: 'center',
+    marginTop: "10%",
+    alignItems: "center",
   },
   mainText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: fonts.main,
-    color: 'white',
-    fontStyle: 'italic',
-    margin: '7%',
+    color: "white",
+    fontStyle: "italic",
+    margin: "7%",
   },
   footerView: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
   },
   whiteText: {
-    color: 'white',
-    fontStyle: 'italic',
+    color: "white",
+    fontStyle: "italic",
     fontSize: fonts.small,
   },
   blueText: {
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
 
     marginLeft: 8,
     fontSize: fonts.medium,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 

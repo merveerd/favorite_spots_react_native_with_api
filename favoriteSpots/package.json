@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "ios": "npx react-native run-ios",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint ."
@@ -27,7 +27,7 @@
     "native-base": "^2.13.14",
     "react": "16.13.1",
     "react-native": "0.63.2",
-    "react-native-gesture-handler": "^1.7.0",
+    "react-native-gesture-handler": "^1.9.0",
     "react-native-image-picker": "^2.3.3",
     "react-native-keychain": "^6.2.0",
     "react-native-maps": "0.27.1",

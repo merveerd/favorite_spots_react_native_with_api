@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
   View,
   FlatList,
@@ -11,16 +11,19 @@ import {
 import {connect} from "react-redux";
 import Place from "../Places/Place";
 import {getFriendGroups} from "../../actions";
-//import {AuthContext} from '../../context';
+import {useIsFocused} from "@react-navigation/native";
 import {fonts, colors} from "../../style";
 const Home = (props) => {
+  const isVisible = useIsFocused();
   useEffect(() => {
-    console.log("home", props.user);
-    props.getFriendGroups({id: props.user._id}); //in case of someone else has been added a new place to the friend group, we are updating the friend group data
-  }, []);
+    //in case of someone else has added a new place to the friend group too, we can update the friend group data with useIsFocused
+    if (isVisible) {
+      props.getFriendGroups({id: props.user._id});
+    }
+  }, [isVisible]);
+
   let onlyPersonalPlaces = [];
   if (props.friendGroups.places) {
-    console.log(props.friendGroups);
     onlyPersonalPlaces = props.user.places.filter(function (obj) {
       return props.friendGroups.places.indexOf(obj) === -1;
     });

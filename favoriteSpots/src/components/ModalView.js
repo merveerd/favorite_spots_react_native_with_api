@@ -1,17 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React from "react";
 import {
   View,
   Text,
   Dimensions,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   Modal,
-} from 'react-native';
-import {connect} from 'react-redux';
-import {fonts, colors} from '../style';
-import {TextInput} from 'react-native-gesture-handler';
-import {Icon} from 'native-base';
+} from "react-native";
+import {fonts, colors} from "../style";
+import {TextInput} from "react-native-gesture-handler";
+import {Icon} from "native-base";
 
 const ModalView = (props) => {
   return (
@@ -19,7 +17,7 @@ const ModalView = (props) => {
       transparent={true}
       animationType="slide"
       onRequestClose={() => {
-        console.warn('close model');
+        console.warn("close model");
       }}
       visible={props.visible}>
       <View style={styles.modalView}>
@@ -48,22 +46,22 @@ export default ModalView;
 
 const styles = StyleSheet.create({
   customInput: {
-    width: '60%',
-    height: '40%',
+    width: "60%",
+    height: "40%",
     borderRadius: 30,
-    textAlign: 'center',
+    textAlign: "center",
 
     backgroundColor: colors.blue,
     fontSize: fonts.medium,
   },
   modalView: {
-    marginTop: Dimensions.get('window').height / 2,
-    maxHeight: Dimensions.get('window').height / 2,
+    marginTop: Dimensions.get("window").height / 2,
+    maxHeight: Dimensions.get("window").height / 2,
     backgroundColor: colors.somon,
   },
   modalItems: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   closeModal: {
     marginRight: 0,

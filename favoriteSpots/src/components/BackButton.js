@@ -1,8 +1,6 @@
 import React from "react";
-import {Dimensions} from "react-native";
 import {colors} from "../style";
 import {Icon} from "native-base";
-import * as RootNavigation from "../RootNavigation";
 
 const BackButton = (props) => (
   <Icon
