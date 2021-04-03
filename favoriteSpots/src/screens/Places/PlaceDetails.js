@@ -26,6 +26,7 @@ const PlaceDetails = (props) => {
 
   useEffect(() => {
     setPlaceInfo(props.route.params.data);
+    console.log("info", props.route.params.data);
   }, []);
 
   const searchGroup = (text) => {

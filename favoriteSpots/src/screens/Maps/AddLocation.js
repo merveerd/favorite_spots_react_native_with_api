@@ -10,8 +10,6 @@ import {
   Platform,
   SafeAreaView,
   StatusBar,
-  Dimensions,
-  TouchableOpacity,
 } from "react-native";
 import MapView, {PROVIDER_GOOGLE, Marker, Callout} from "react-native-maps";
 import {request, PERMISSIONS} from "react-native-permissions";
@@ -20,9 +18,10 @@ import Geolocation from "@react-native-community/geolocation";
 import ImagePicker from "react-native-image-picker";
 import {TextInput} from "react-native-gesture-handler";
 import {addPlace} from "../../actions";
-import {fonts, colors} from "../../style";
+import {fonts} from "../../style";
 import {Button, SearchBar, SearchList} from "../../components";
-//callout text can be varied, randomly shown. Do yo like this place, let's make it memorable.
+//callout text can be varied, randomly shown. Do you like this place, let's make it memorable.
+
 class AddLocation extends Component {
   constructor(props) {
     super(props);
@@ -32,7 +31,6 @@ class AddLocation extends Component {
       desc: null,
       markers: [],
       isMapReady: false,
-      isPressEnabled: false,
       shownFavorites: false,
       selectedLocation: {
         longitude: 0,
@@ -54,7 +52,6 @@ class AddLocation extends Component {
         latitudeDelta: 0.001,
         longitudeDelta: 0.001,
       },
-      regionChangeProgress: false,
     };
     this.selectionTapRef = React.createRef();
   }
@@ -79,8 +76,7 @@ class AddLocation extends Component {
         },
       },
       () => {
-        console.log("press");
-        this.getPressedLocation(); //to make sure state changes have been recognized
+        this.getPressedLocation();
       },
     );
   };
@@ -174,7 +170,6 @@ class AddLocation extends Component {
     );
   };
 
-  // Fetch location details as a JOSN from google map API
   getPressedLocation = () => {
     this.setState({placeName: ""});
     //only for no-name places
@@ -188,14 +183,15 @@ class AddLocation extends Component {
     )
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("responseJson", responseJson);
+        let selectedPlace = responseJson.results[0];
         this.setState({
           selectedLocation: {
             ...this.state.selectedLocation,
-            latitude: responseJson.results[0].geometry.location.lat,
-            longitude: responseJson.results[0].geometry.location.lng,
+            latitude: selectedPlace.geometry.location.lat,
+            longitude: selectedPlace.geometry.location.lng,
           },
-          selectedAdress: responseJson.results[0].formatted_address,
+          selectedAdress: selectedPlace.formatted_address,
+          placeId: selectedPlace.place_id,
         });
       });
   };
@@ -204,7 +200,6 @@ class AddLocation extends Component {
   createMarker = (region) => {
     this.setState({
       region,
-      regionChangeProgress: true,
     });
   };
 
@@ -221,7 +216,7 @@ class AddLocation extends Component {
             longitudeDelta: 0.003,
             latitudeDelta: 0.003,
           },
-          regionChangeProgress: false,
+
           selectedAdress: responseJson.result.formatted_address,
           placeName: responseJson.result.name,
           placeId: responseJson.result.place_id,
@@ -235,11 +230,6 @@ class AddLocation extends Component {
       searchKeyword: "",
       //isShowingResults: true,
     });
-  };
-
-  openTapSelectionWarning = () => {
-    console.log("openTapSelectionWarning for anonymous adresses");
-    alert("Please select");
   };
 
   render() {
@@ -282,11 +272,8 @@ class AddLocation extends Component {
                 height: "100%",
                 justifyContent: "flex-end",
               }}
-              // initialRegion={this.state.region}
               onMapReady={this.onMapReady}
-              onPress={(e) =>
-                this.state.isPressEnabled && this.handleMapPress(e)
-              }
+              onPress={(e) => this.handleMapPress(e)}
               region={this.state.region}>
               {this.state.selectedLocation.latitude ? (
                 <Marker
@@ -330,31 +317,10 @@ class AddLocation extends Component {
                 {this.state.placeName}
                 {this.state.selectedAdress}
               </Text>
-              <TouchableOpacity
-                style={{
-                  backgroundColor: colors.purple,
-                  borderRadius:
-                    Math.round(
-                      Dimensions.get("window").width +
-                        Dimensions.get("window").height,
-                    ) / 2,
-                  width: Dimensions.get("window").width * 0.1,
-                  height: Dimensions.get("window").width * 0.1,
-                }}
-                ref={this.ref}
-                text={"tap selection"}
-                onMouseOver={() => {
-                  this.openTapSelectionWarning();
-                }}
-                onPress={() => {
-                  this.setState((prevState) => ({
-                    isPressEnabled: !prevState.isPressEnabled,
-                  }));
-                }}></TouchableOpacity>
+
               <Button
                 style={styles.customButtonSelect}
                 text={"Save the place"}
-                disabled={this.state.regionChangeProgress}
                 onPress={() => {
                   this.selectImage();
                 }}></Button>
@@ -476,3 +442,25 @@ const mapStateToProps = ({placeResponse, authResponse}) => {
 };
 
 export default connect(mapStateToProps, {addPlace})(AddLocation);
+
+{
+  /* <TouchableOpacity
+                style={{
+                  backgroundColor: colors.purple,
+                  marginLeft: "10%",
+                  borderRadius:
+                    Math.round(
+                      Dimensions.get("window").width +
+                        Dimensions.get("window").height,
+                    ) / 2,
+                  width: Dimensions.get("window").width * 0.1,
+                  height: Dimensions.get("window").width * 0.1,
+                }}
+                ref={this.ref}
+                text={"tap"}
+                onPress={() => {
+                  this.setState((prevState) => ({
+                    isPressEnabled: !prevState.isPressEnabled,
+                  }));
+                }}></TouchableOpacity> */
+}

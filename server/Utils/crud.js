@@ -1,9 +1,7 @@
 const mongoose = require("mongoose");
 const getOne = (model) => async (req, res) => {
-  const id = req.params.id;
-
   try {
-    const doc = await model.findById(id);
+    const doc = await model.findById(req.params.id);
     res.status(200).json(doc); //can be turned into {data: doc}
   } catch (err) {
     res.status(404).json({ message: err });
@@ -13,7 +11,6 @@ const getOne = (model) => async (req, res) => {
 const getManyById = (model) => async (req, res) => {
   //returns all the documents with given id's.
   try {
-    console.log("getmanyById", req.body);
     const searchIds = req.body;
     let objectIds = searchIds.map((id) => mongoose.Types.ObjectId(id));
     const docs = await model.find({

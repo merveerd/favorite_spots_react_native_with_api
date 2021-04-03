@@ -1,17 +1,17 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const controllers = require('../controllers/users.controller');
+const controllers = require("../controllers/users.controller");
 
 //
-router.route('/').get(controllers.getMany);
+router.route("/").get(controllers.getMany);
 
 //item.:id
 router
-  .route('/:id')
-  .get(controllers.getOne)
+  .route("/:id")
+  .get(controllers.getUserData) //aggregated data
   .patch(controllers.updateOne)
   .post(controllers.updateSubDoc)
   .delete(controllers.removeOne);
 
-router.route('/').post(controllers.getBySearchText);
+router.route("/").post(controllers.getBySearchText);
 module.exports = router;

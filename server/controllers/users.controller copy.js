@@ -37,28 +37,44 @@ const getBySearchText = (model) => async (req, res) => {
 
 const getUserData = (model) => async (req, res) => {
   try {
+    console.log("getUserData");
     let doc = await model.aggregate([
       { $match: { _id: mongoose.Types.ObjectId(`${req.params.id}`) } },
 
       {
         $lookup: {
           from: "places",
+          localField: "places._id",
+          foreignField: "_id",
+          as: "places",
+        },
+      },
+      {
+        $lookup: {
+          from: "places",
           let: {
-            places: "$places",
+            places: "$places", // keep a reference to the "places" field of the current document and make it accessible via "$$places"
           },
           pipeline: [
-            { $match: { $expr: { $in: ["$_id", "$$places._id"] } } },
+            {
+              $match: {
+                $expr: {
+                  $in: ["$_id", "$$places._id"], // this just does the "joining"
+                },
+              },
+            },
+
             {
               $addFields: {
-                description: {
+                location: {
                   $arrayElemAt: [
-                    "$$places.description",
+                    "$$places.location",
                     { $indexOfArray: ["$$places._id", "$_id"] },
                   ],
                 },
-                photos: {
+                placeName: {
                   $arrayElemAt: [
-                    "$$places.photos",
+                    "$$places.placeName",
                     { $indexOfArray: ["$$places._id", "$_id"] },
                   ],
                 },
@@ -66,17 +82,6 @@ const getUserData = (model) => async (req, res) => {
             },
           ],
           as: "places",
-        },
-      },
-      { $unwind: "$places" },
-      {
-        $group: {
-          _id: "$_id",
-          email: { $first: "$email" },
-          username: { $first: "$username" },
-          name: { $first: "$name" },
-          image: { $first: "$image" },
-          places: { $push: "$places" },
         },
       },
     ]);
