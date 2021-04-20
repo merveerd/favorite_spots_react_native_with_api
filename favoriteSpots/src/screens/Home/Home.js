@@ -1,18 +1,10 @@
-import React, {useEffect, useState} from "react";
-import {
-  View,
-  FlatList,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  ActivityIndicator,
-  StatusBar,
-} from "react-native";
+import React, {useEffect} from "react";
+import {View, FlatList, SafeAreaView, StatusBar} from "react-native";
 import {connect} from "react-redux";
 import Place from "../Places/Place";
 import {getFriendGroups} from "../../actions";
 import {useIsFocused} from "@react-navigation/native";
-import {fonts, colors} from "../../style";
+import {colors} from "../../style";
 const Home = (props) => {
   const isVisible = useIsFocused();
   useEffect(() => {

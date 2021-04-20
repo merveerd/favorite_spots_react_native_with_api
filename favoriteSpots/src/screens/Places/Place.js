@@ -8,24 +8,23 @@ const Place = (props) => {
   //icon section will be added when friendGroup places available
 
   const {photos, placeName, description, createdDate} = props.data;
+  const [groupNames, setGroupNames] = useState([]);
 
-  // const [groupNames, setGroupNames] = useState([]);
-
-  // const SharedFriendGroups = () => {
-  //   let groupNames = [];
-  //   props.data.friendGroups.forEach((item, index) => {
-  //     props.friendGroups.forEach((group) => {
-  //       if (group.id === item) {
-  //         groupNames.push(group.name);
-  //       }
-  //     });
-  //   });
-  //   return groupNames.map((groupName, index) => (
-  //     <Text key={index} style={{fontSize: 12, margin: 5, color: colors.purple}}>
-  //       {groupName}
-  //     </Text>
-  //   ));
-  // };
+  const SharedFriendGroups = () => {
+    let groupNames = [];
+    props.data.friendGroups.forEach((item, index) => {
+      props.friendGroups.forEach((group) => {
+        if (group.id === item) {
+          groupNames.push(group.name);
+        }
+      });
+    });
+    return groupNames.map((groupName, index) => (
+      <Text key={index} style={{fontSize: 12, margin: 5, color: colors.purple}}>
+        {groupName}
+      </Text>
+    ));
+  };
   return (
     <TouchableOpacity
       activeOpacity={1}
@@ -39,16 +38,16 @@ const Place = (props) => {
         flexDirection: "row",
       }}>
       <View style={{flex: 9, marginLeft: 10}}>
-        {/* <Text style={{fontSize: 14, fontWeight: 'bold'}}>{placeName}</Text> */}
+        <Text style={{fontSize: 14, fontWeight: "bold"}}>{placeName}</Text>
 
         <Text style={{fontSize: fonts.small, marginTop: 5}}>{description}</Text>
-        {/* {props.data.friendGroups ? (
+        {props.data.friendGroups ? (
           <View style={{flexDirection: "row"}}>
             <SharedFriendGroups />
           </View>
         ) : (
           []
-        )} */}
+        )}
         {photos && (
           <View>
             <Image
@@ -56,9 +55,6 @@ const Place = (props) => {
               style={{width: "100%", height: 150}}
               resizeMode="cover"
             />
-            {/* <Text style={{fontSize: fonts.small, marginTop: 5}}>
-              {placeName}
-            </Text> */}
           </View>
         )}
 

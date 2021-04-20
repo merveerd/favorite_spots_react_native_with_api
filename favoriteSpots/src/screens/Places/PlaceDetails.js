@@ -7,12 +7,10 @@ import {
   TextInput,
   FlatList,
   StyleSheet,
-  TouchableOpacity,
-  Alert,
 } from "react-native";
 import {colors, fonts} from "../../style";
 import {connect} from "react-redux";
-import {Button, Input, Header} from "../../components";
+import {Button} from "../../components";
 import {getFriendGroups, addGroupPlace} from "../../actions";
 import {Icon} from "native-base";
 import * as RootNavigation from "../../RootNavigation";
@@ -50,14 +48,7 @@ const PlaceDetails = (props) => {
           borderBottomWidth: 0.5,
           borderColor: colors.somon,
         }}
-        onPress={() => {
-          // if (!item.members.includes(props.route.params.uid)) {
-          //   item.members.push(props.route.params.uid);
-          //   props.updateFriendGroup(item); //sending updated friend group
-          // } else {
-          //   Alert.alert('warning', 'this person is already in this hub!');
-          // }
-        }}>
+        onPress={() => {}}>
         <Text style={styles.text}>{item.name}</Text>
         <Button
           style={styles.customButton}
@@ -75,7 +66,7 @@ const PlaceDetails = (props) => {
     </View>
   );
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 3}}>
       <Icon
         style={{color: colors.blue, marginLeft: 10, fontSize: 40}}
         type="FontAwesome"
@@ -84,8 +75,8 @@ const PlaceDetails = (props) => {
           RootNavigation.navigate("Home");
         }}></Icon>
       {placeInfo ? (
-        <View style={{alignItems: "center"}}>
-          <View>
+        <View style={{flex: 3, alignItems: "center"}}>
+          <View style={{flex: 2, alignItems: "center"}}>
             <Text style={{fontSize: fonts.medium, fontWeight: "bold"}}>
               {placeInfo.desc}
               <Text
@@ -97,30 +88,25 @@ const PlaceDetails = (props) => {
             </Text>
 
             <Text style={{fontSize: 12, marginTop: 5, marginBottom: 10}}>
-              {placeInfo.location.adress}
+              {placeInfo.location.address}
             </Text>
 
-            {placeInfo.image && (
-              <View>
-                <Image
-                  source={{uri: placeInfo.image}}
-                  style={{width: "100%", height: 150}}
-                  resizeMode="cover"
-                />
-              </View>
-            )}
-
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                paddingRight: 100,
-                marginTop: 10,
-              }}></View>
+            {/* {placeInfo.photos.length && (
+              <Image
+                source={{uri: placeInfo.photos[0]}}
+                style={{
+                  width: "100%",
+                  height: "70%",
+                  resizeMode: "contain",
+                  padding: 0,
+                  margin: 0,
+                }}
+              />
+            )} */}
           </View>
 
           {addPlaceInHub ? (
-            <View>
+            <>
               <TextInput
                 placeholder="Plese enter the friend group"
                 placeholderTextColor="black"
@@ -137,7 +123,7 @@ const PlaceDetails = (props) => {
               ) : (
                 []
               )}
-            </View>
+            </>
           ) : (
             <Button
               style={styles.buttonContainer}
@@ -180,11 +166,10 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     textAlign: "center",
-    marginTop: 10,
     height: 45,
     alignSelf: "center",
     marginBottom: 20,
-    width: 250,
+    width: "60%",
     borderRadius: 30,
     borderColor: "white",
     backgroundColor: colors.somon,
@@ -206,10 +191,8 @@ const styles = StyleSheet.create({
   },
   item: {
     padding: 10,
-    marginHorizontal: 16,
   },
   text: {
-    padding: 20,
     fontSize: fonts.small,
   },
 });

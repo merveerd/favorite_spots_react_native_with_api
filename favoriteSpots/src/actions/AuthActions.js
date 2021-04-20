@@ -142,7 +142,6 @@ export const updateUserProfile = (params) => {
 
 const responseGetUser = (response, status, dispatch) => {
   if (status) {
-    console.log("User", response.data); // aggregate with places
     dispatch({type: LOGIN_SUCCESS, payload: response.data[0]});
   } else {
     console.log("Read Data error get User: ", response);
@@ -152,7 +151,6 @@ const responseGetUser = (response, status, dispatch) => {
 
 const getUser = (response, status, dispatch) => {
   if (status) {
-    console.log("status", response.data.user._id);
     get(
       BASE_URL.concat(`/users/${response.data.user._id}`),
       responseGetUser,
