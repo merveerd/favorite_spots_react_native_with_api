@@ -62,6 +62,12 @@ const getUserData = (model) => async (req, res) => {
                     { $indexOfArray: ["$$places._id", "$_id"] },
                   ],
                 },
+                createdDate: {
+                  $arrayElemAt: [
+                    "$$places.createdDate",
+                    { $indexOfArray: ["$$places._id", "$_id"] },
+                  ],
+                },
               },
             },
           ],

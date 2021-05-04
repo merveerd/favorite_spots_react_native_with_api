@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, TouchableOpacity} from 'react-native';
-import {connect} from 'react-redux';
-import {signOut} from '../../actions';
+import React, {useState, useEffect} from "react";
+import {View, Text, SafeAreaView, TouchableOpacity} from "react-native";
+import {connect} from "react-redux";
+import {signOut} from "../../actions";
 
 const Settings = (props) => {
   return (
